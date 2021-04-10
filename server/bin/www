@@ -9,7 +9,7 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 }).listen(80);
 
-const https = https.createServer({
+https.createServer({
   key: fs.readFileSync(env.key),
   cert: fs.readFileSync(env.cert),
 }, app).listen(443);
