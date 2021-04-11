@@ -44,7 +44,7 @@ mongoose.connect('mongodb+srv://vincent:' + pass.password + '@cluster0.ic0uz.mon
 }
 );
 
-http.createServer(app).listen(80);
+//http.createServer(app).listen(80);
 app.use(index);
 
 app.get('/upload?*', (req, res) => {
