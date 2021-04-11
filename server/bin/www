@@ -5,8 +5,8 @@ const app = require('../app');
 const env = require(`../environment/${process.env.NODE_ENV}`);
 
 const httpServer = http.createServer((req, res) => {
+  console.log(req.headers.host, req.url);
   res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-  res.end();
 }).listen(80);
 
 const httpsServer = https.createServer({
