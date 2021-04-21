@@ -10,13 +10,17 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // création du serveur
-const express = require('express');
 const http = require('http');
+const express = require('express');
 const app = express();
+const server = app.listen(80);
 
-module.exports = app;
+module.exports = {
+    server,
+    app,
+};;
 
-require('./chat');
+require("./config/socket.config");
 
 // imports pour les emails
 const nodemailer = require('nodemailer');

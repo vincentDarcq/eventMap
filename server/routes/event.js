@@ -1,18 +1,4 @@
-const path = require('path');
-// Gérer les fichiers
-const multer = require('multer');
-const storage = multer(
-  {
-    storage: multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../upload'));
-      },
-      filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-      }
-    })
-  });
-
+const storage = require('../upload/multer');
 const router = require('express').Router();
 const { getAll, create, modify, deleteOne, uploadImages } = require('../controllers/event');
 
