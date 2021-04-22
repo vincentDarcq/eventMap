@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
     name: 'eventmap',
-    script: './server/bin/www',
+    script: 'sudo NODE_ENV=production node ./server/bin/www',
     instances: 'max',
     autorestart: true,
     watch: true,
