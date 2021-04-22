@@ -9,6 +9,7 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 }).listen(env.portHttp);
 
+console.log("key :" + env.key)
 const httpsServer = https.createServer({
   key: fs.readFileSync(env.key),
   cert: fs.readFileSync(env.cert),
