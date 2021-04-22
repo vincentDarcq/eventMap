@@ -13,10 +13,11 @@ const mongoose = require('mongoose');
 const express = require('express');
 const http = require('http');
 const app = express();
+const server = app.listen(80);
 
 module.exports = app;
 
-require('./chat');
+require("./config/socket.config");
 
 // imports pour les emails
 const nodemailer = require('nodemailer');
