@@ -13,7 +13,7 @@ const mongoose = require('mongoose');
 const express = require('express');
 const http = require('http');
 const app = express();
-const server = app.listen(80);
+module.exports.server = app.listen(80);
 
 module.exports = app;
 
