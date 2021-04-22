@@ -9,6 +9,7 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 }).listen(env.portHttp);
 
+console.log("key :" + fs.readFileSync(env.key))
 const options = {
   key: fs.readFileSync(env.key),
   cert: fs.readFileSync(env.cert),
