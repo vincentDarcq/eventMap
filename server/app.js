@@ -10,14 +10,13 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // création du serveur
-const http = require('http');
 const express = require('express');
+const http = require('http');
 const app = express();
-const server = app.listen(80);
-module.exports.app = app;
-module.exports.server = server;
 
-require("./config/socket.config");
+module.exports = app;
+
+require('./chat');
 
 // imports pour les emails
 const nodemailer = require('nodemailer');
@@ -45,7 +44,7 @@ mongoose.connect('mongodb+srv://vincent:' + pass.password + '@cluster0.ic0uz.mon
 }
 );
 
-//http.createServer(app).listen(80);
+http.createServer(app).listen(80);
 app.use(index);
 
 app.get('/upload?*', (req, res) => {
