@@ -14,11 +14,8 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const server = app.listen(80);
-
-module.exports = {
-    server,
-    app,
-};;
+module.exports.app = app;
+module.exports.server = server;
 
 require("./config/socket.config");
 
