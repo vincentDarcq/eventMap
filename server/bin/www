@@ -1,7 +1,7 @@
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const app = require('../app');
+const { app } = require('../app');
 const env = require(`../environment/${process.env.NODE_ENV}`);
 
 const httpServer = http.createServer((req, res) => {
@@ -9,7 +9,6 @@ const httpServer = http.createServer((req, res) => {
   res.end();
 }).listen(env.portHttp);
 
-console.log(typeof app);
 const options = {
   key: fs.readFileSync(env.key),
   cert: fs.readFileSync(env.cert),
