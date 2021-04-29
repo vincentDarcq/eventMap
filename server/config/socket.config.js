@@ -1,12 +1,14 @@
 const socketio = require("socket.io");
-const { server } = require("../app");
 const { getEventRooms } = require("../queries/eventRoom.queries");
 const {
   findMessagesPerRoomId,
   createMessage,
 } = require("../queries/message.queries");
+const { httpsServer } = require('../bin/www');
+require('events').EventEmitter.prototype._maxListeners = 100;
 
-const initEventRooms = async () => {
+
+const initEventRooms = async (res) => {
   try {
     eventRooms = await getEventRooms();
     for (let eventRoom of eventRooms) {
@@ -39,13 +41,14 @@ const initEventRooms = async () => {
         });
       });
     }
+    res.status(200).json("socket initialized");
   } catch (e) {
     throw e;
   }
 };
 
-const initSocketServer = () => {
-  ios = socketio(server, {
+module.exports.initSocketServer = (res) => {
+  ios = socketio(httpsServer, {
     allowEIO3: true // false by default
   });
   ios.on("connect", (socket) => {
@@ -53,10 +56,8 @@ const initSocketServer = () => {
     socket.emit("eventRooms", eventRooms);
   });
 
-  ios.on("close", (socket) => {
+  ios.on("disconnect", (socket) => {
     socket.disconnect(true);
   });
-  initEventRooms();
+  initEventRooms(res);
 };
-
-initSocketServer();

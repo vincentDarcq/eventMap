@@ -50,13 +50,13 @@ exports.getAll = async (req, res, next) => {
   }
 }
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   const event = newEvent(req);
   event.save((err) => {
     if (err) { res.status(500).json(err) }
-    createEventRoom(event._id);
-    res.status(200).json(event);
   })
+  createEventRoom(event._id);
+  res.status(200).json(event);
 }
 
 exports.uploadImages = async (req, res) => {

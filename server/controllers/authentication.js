@@ -15,7 +15,6 @@ exports.refresh_token = async (req, res) => {
       if (err) { res.status(403).json('token invalid') }
       const newToken = jwt.sign({}, RSA_KEY_PRIVATE, {
         algorithm: 'RS256',
-        expiresIn: '300s',
         subject: decoded.sub
       })
       res.status(200).json(newToken);
@@ -61,7 +60,6 @@ exports.signin = async (req, res, next) => {
       if (user && bcrypt.compareSync(req.body.password, user.password)) {
         const token = jwt.sign({}, RSA_KEY_PRIVATE, {
           algorithm: 'RS256',
-          expiresIn: '300s',
           subject: user._id.toString()
         })
         res.status(200).json(token)

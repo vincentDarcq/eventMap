@@ -11,17 +11,14 @@ const mongoose = require('mongoose');
 
 // création du serveur
 const express = require('express');
-const http = require('http');
 const app = express();
-const server = app.listen(80);
-
-module.exports = {
-    app,
-    server
-};
-
-require("./config/socket.config");
-
+const cors = require('cors');
+app.use(cors({
+  'allowedHeaders': ['authorization', 'Content-Type'],
+  'origin': '*',
+  'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  'preflightContinue': false
+}));
 // imports pour les emails
 const nodemailer = require('nodemailer');
 const sparkPostTransport = require('nodemailer-sparkpost-transport');
@@ -57,3 +54,5 @@ app.get('/upload?*', (req, res) => {
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
+
+module.exports = app;

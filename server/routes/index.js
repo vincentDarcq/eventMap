@@ -7,8 +7,8 @@ const chat = require('./chat');
 
 router.use('/api/auth', auth);
 router.use('/api/event', event);
-router.use('/api/network', network);
 router.use('/api/music_story', music_story);
 router.use('/api/chat', chat);
+router.use('/api/network', network);
 
 module.exports = router;

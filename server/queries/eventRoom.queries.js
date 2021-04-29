@@ -4,15 +4,13 @@ exports.getEventRooms = () => {
   return EventRoom.find({}).exec();
 };
 
-exports.createEventRoom = (eventId) => {
+exports.createEventRoom = async (eventId) => {
   const eventRoom = new EventRoom({
     eventId: eventId
   });
-  eventRoom.save((err) => {
-    if (err) { res.status(500).json(err) }
-  });
+  await eventRoom.save();
 }
 
 exports.deleteEventRoom = (eventId) => {
-  return EventRoom.findOneAndDelete({ eventId: eventId }).exec()
+  return EventRoom.findOneAndDelete({ eventId: eventId }).exec();
 }

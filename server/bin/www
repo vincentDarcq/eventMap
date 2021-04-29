@@ -1,7 +1,7 @@
 const fs = require('fs');
 const https = require('https');
 const http = require('http');
-const { app } = require('../app');
+const app = require('../app');
 const env = require(`../environment/${process.env.NODE_ENV}`);
 
 const httpServer = http.createServer((req, res) => {
@@ -15,3 +15,5 @@ const options = {
 };
 
 const httpsServer = https.createServer(options, app).listen(env.portHttps);
+
+module.exports.httpsServer = httpsServer;
