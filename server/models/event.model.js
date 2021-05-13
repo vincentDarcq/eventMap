@@ -16,6 +16,7 @@ const eventSchema = Schema({
     emailCreateur: String,
     scope: String,
     invités: Array,
+    createByOwner: Boolean,
     image1: String,
     image2: String,
     image3: String
@@ -41,6 +42,7 @@ module.exports.newEvent = function (req) {
         emailCreateur: req.body.emailCreateur,
         scope: req.body.scope,
         invités: req.body.invités,
+        createByOwner: req.body.createByOwner,
         image1: null,
         image2: null,
         image3: null,
@@ -63,7 +65,8 @@ module.exports.editEvent = function (req) {
         createur: req.body.createur,
         emailCreateur: req.body.emailCreateur,
         scope: req.body.scope,
-        invités: req.body.invités
+        invités: req.body.invités,
+        createByOwner: req.body.createByOwner
     };
     return editEvent;
 }
