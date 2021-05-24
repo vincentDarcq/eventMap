@@ -4,10 +4,10 @@ const schema = mongoose.Schema;
 const messageSchema = schema(
   {
     type: { type: String, enum: ["text", "image", "file"], default: "text" },
-    data: String,
-    author: { type: schema.Types.ObjectId, ref: "user" },
-    authorName: String,
-    event: { type: schema.Types.ObjectId, ref: "event" },
+    message: String,
+    userId: { type: schema.Types.ObjectId, ref: "user" },
+    userName: String,
+    eventId: { type: schema.Types.ObjectId, ref: "event" },
   },
   { timestamps: true }
 );

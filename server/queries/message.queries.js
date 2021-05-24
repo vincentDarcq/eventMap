@@ -1,7 +1,7 @@
 const Message = require("../models/message.model");
 
-exports.findMessagesPerRoomId = (roomId) => {
-  return Message.find({ event: roomId }).exec();
+exports.findMessagesPerEventId = (eventId) => {
+  return Message.find({ eventId: eventId }).exec();
 };
 
 exports.createMessage = (message) => {

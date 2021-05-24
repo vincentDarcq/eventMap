@@ -7,8 +7,11 @@ const Event = require('../models/event.model');
 const User = require('../models/user.model');
 const { newEvent, editEvent } = require('../models/event.model');
 const { getEvents, deleteOne, getEvent } = require('../queries/event.queries');
-const { createEventRoom, deleteEventRoom } = require('../queries/eventRoom.queries');
-const { findMessagesPerRoomId, deleteMessage } = require('../queries/message.queries');
+const {
+  deleteMessage,
+  createMessage,
+  findMessagesPerEventId } = require('../queries/message.queries');
+
 
 allPublicEvents = function (events) {
   let publicEvents = [];
@@ -54,8 +57,7 @@ exports.create = async (req, res) => {
   const event = newEvent(req);
   event.save((err) => {
     if (err) { res.status(500).json(err) }
-  })
-  createEventRoom(event._id);
+  });
   res.status(200).json(event);
 }
 
@@ -104,8 +106,7 @@ exports.modify = async (req, res) => {
 
 exports.deleteOne = async (req, res, next) => {
   try {
-    const room = await deleteEventRoom(req.query.eventId);
-    const messages = await findMessagesPerRoomId(room._id);
+    const messages = await findMessagesPerEventId(room._id);
     for (let message of messages) {
       deleteMessage(message._id);
     }
@@ -115,6 +116,30 @@ exports.deleteOne = async (req, res, next) => {
     res.status(200).json(eventDelete);
   } catch (e) {
     next(e);
+  }
+}
+
+exports.createMessage = async (req, res, next) => {
+  try {
+    const message = await createMessage({
+      message: req.body.message,
+      eventId: req.body.eventId,
+      userId: req.body.userId,
+      userName: req.body.userName,
+    });
+    res.status(200).json(message);
+  } catch (e) {
+    throw e;
+  }
+}
+
+exports.getMessages = async (req, res, next) => {
+  try {
+    console.log(req.query)
+    const messages = await findMessagesPerEventId(req.query.eventId);
+    res.status(200).json(messages);
+  } catch (e) {
+    throw e;
   }
 }
 
