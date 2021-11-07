@@ -2582,7 +2582,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function MapComponent_div_1_Template(rf, ctx) { if (rf & 1) {
     const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("leafletMapReady", function MapComponent_div_1_Template_div_leafletMapReady_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r2); const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r1.onMapReady($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -2787,16 +2787,12 @@ class MapComponent {
     }
 }
 MapComponent.ɵfac = function MapComponent_Factory(t) { return new (t || MapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_markers_service__WEBPACK_IMPORTED_MODULE_4__["MarkersService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"])); };
-MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", inputEventToZoom: "inputEventToZoom", inputEvents: "inputEvents" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 6, vars: 1, consts: [["fxLayout", "column", "fxLayoutAlign", "center center"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click"], ["mat-raised-button", "", 3, "click"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
+MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", inputEventToZoom: "inputEventToZoom", inputEvents: "inputEvents" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 4, vars: 1, consts: [["fxLayout", "column", "fxLayoutAlign", "center center"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, MapComponent_div_1_Template, 1, 1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "button", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_2_listener() { return ctx.BackToPosition(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3, "Revenir \u00E0 ma position");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "button", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_4_listener() { return ctx.callOpenData(); });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5, "test API OpenData");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
