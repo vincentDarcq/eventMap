@@ -38,7 +38,7 @@ exports.getAll = async (req, res, next) => {
             let currentUser = user;
             let events = allEvents;
             for (let e of allEvents) {
-              if (e.scope === "privé" && e.invités.indexOf(currentUser.name) === -1) {
+              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) === -1) {
                 events.splice(events.indexOf(e), 1);
               }
             }
@@ -106,7 +106,7 @@ exports.modify = async (req, res) => {
 
 exports.deleteOne = async (req, res, next) => {
   try {
-    const messages = await findMessagesPerEventId(room._id);
+    const messages = await findMessagesPerEventId(req.query.eventId);
     for (let message of messages) {
       deleteMessage(message._id);
     }
