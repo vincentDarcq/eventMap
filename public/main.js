@@ -56,8 +56,8 @@ class EventsApiService {
     callOpenData() {
         // const date = new Date("2021-11-09T19:30:00").toLocaleString()
         // console.log(date)
-        for (let i = 0; i < 2100; i += 20) {
-            this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.date_start=2021&refine.tags=concert&timezone=Europe%2FParis`)
+        for (let i = 0; i < 3000; i += 20) {
+            this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.tags=concert&refine.date_start=2022&timezone=Europe%2FParis`)
                 .subscribe(res => {
                 res.records.forEach(element => {
                     const f = element.fields;
@@ -314,14 +314,19 @@ class EventService {
         this.http.get('/api/event/getAll').subscribe((events) => {
             for (let event of Object.keys(events)) {
                 const e = events[event];
-                let newEvent = new _models_event__WEBPACK_IMPORTED_MODULE_3__["Event"](e._id, e.name, new Date(e.dateDebut), e.beginTime, new Date(e.dateFin), e.endTime, e.type, e.description, e.lieu, e.latitude, e.longitude, e.createur, e.emailCreateur, this.timeBeforeBegin(e.dateDebut), e.createByOwner);
+                let newEvent = new _models_event__WEBPACK_IMPORTED_MODULE_3__["Event"](e._id, e.name, new Date(e.dateDebut), e.beginTime, new Date(e.dateFin), e.endTime, e.type, e.description, e.lieu, e.latitude, e.longitude, e.createur, e.emailCreateur, this.timeBefore(e.dateDebut), e.createByOwner);
                 if (new Date(e.dateDebut).getHours() === 0 && new Date(e.dateDebut).getMinutes() === 0) {
                     newEvent.setDateDebutString(new Date(e.dateDebut).toLocaleString().substring(0, 10));
                 }
                 else {
                     newEvent.setDateDebutString(new Date(e.dateDebut).toLocaleString());
                 }
-                newEvent.setDateFin(new Date(e.dateFin));
+                if (e.dateFin !== null) {
+                    newEvent.setDateFin(new Date(e.dateFin));
+                }
+                else {
+                    newEvent.setDateFin(null);
+                }
                 newEvent.setInvites(e.invites);
                 newEvent.setScope(e.scope);
                 newEvent.setSpaceAndTime(e.space_and_time);
@@ -329,11 +334,23 @@ class EventService {
                 newEvent.image1 = e.image1;
                 newEvent.image2 = e.image2;
                 newEvent.image3 = e.image3;
-                if (newEvent.timeLeft.days < 0) {
-                    this.deleteEvent(newEvent._id);
+                if (newEvent.getDateFin()) {
+                    const time_before_end = this.timeBefore(newEvent.getDateFin());
+                    if (time_before_end.days < 0 || time_before_end.hours < 0 || time_before_end.minutes < 0) {
+                        this.deleteEvent(newEvent._id);
+                    }
+                    else {
+                        ev.push(newEvent);
+                    }
                 }
                 else {
-                    ev.push(newEvent);
+                    if (newEvent.getTimeLeft().days < 0) {
+                        console.log(newEvent.getTimeLeft().days);
+                        this.deleteEvent(newEvent._id);
+                    }
+                    else {
+                        ev.push(newEvent);
+                    }
                 }
             }
             this.events.next(ev);
@@ -365,7 +382,7 @@ class EventService {
         });
     }
     addEvent(e) {
-        e.setTimeLeft(this.timeBeforeBegin(e.dateDebut));
+        e.setTimeLeft(this.timeBefore(e.dateDebut));
         e.setDateDebut(new Date(e.dateDebut));
         e.setDateFin(new Date(e.dateFin));
         e.setDateDebutString(new Date(e.dateDebut).toLocaleString());
@@ -406,7 +423,7 @@ class EventService {
         editEvent.setDateDebut(new Date(e.dateDebut));
         editEvent.setDateDebutString(new Date(e.dateDebut).toLocaleString());
         editEvent.setDateFinString(new Date(e.dateFin).toLocaleString());
-        editEvent.setTimeLeft(this.timeBeforeBegin(e.dateDebut));
+        editEvent.setTimeLeft(this.timeBefore(e.dateDebut));
         editEvent.setScope(e.scope);
         editEvent.setInvites(e.invites);
         editEvent.image1 = e.image1;
@@ -418,7 +435,7 @@ class EventService {
     getEventsByUser(email) {
         let e = new Array();
         for (let event of this.events.value) {
-            if (event.emailCreateur === email) {
+            if (event.getEmailCreateur() === email) {
                 e.push(event);
             }
         }
@@ -453,17 +470,16 @@ class EventService {
     getBounds() {
         return this.bounds;
     }
-    timeBeforeBegin(dateDebut) {
+    timeBefore(date) {
         const datePipe = new _angular_common__WEBPACK_IMPORTED_MODULE_0__["DatePipe"]('fr-FR');
-        let leftTime = new _models_left_time__WEBPACK_IMPORTED_MODULE_4__["LeftTime"]();
-        const fd = new Date(datePipe.transform(dateDebut, 'yyyy-MM-dd HH:mm'));
+        const fd = new Date(datePipe.transform(date, 'yyyy-MM-dd HH:mm'));
         const diff = fd.getTime() - this.currentDate.getTime();
         let days = Math.floor((diff / 1000) / 60);
         const mins = days % 60;
         days = Math.floor((days - mins) / 60);
         const hours = days % 24;
         days = Math.floor((days - hours) / 24);
-        leftTime = new _models_left_time__WEBPACK_IMPORTED_MODULE_4__["LeftTime"](days, hours, mins);
+        const leftTime = new _models_left_time__WEBPACK_IMPORTED_MODULE_4__["LeftTime"](days, hours, mins);
         return leftTime;
     }
     getIndexEvent(id) {
@@ -1181,22 +1197,28 @@ __webpack_require__.r(__webpack_exports__);
 
 const _c0 = function () { return { "height": "200px", "width": "220px" }; };
 function EventDetailComponent_img_4_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 9);
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r0.event.image1 && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0))("src", ctx_r0.serverImg + ctx_r0.event.image1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
 } }
 function EventDetailComponent_img_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 10);
 } if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r1.event.image2 && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0))("src", ctx_r1.serverImg + ctx_r1.event.image2, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
 } }
 function EventDetailComponent_img_6_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 10);
 } if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r2.event.image3 && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0))("src", ctx_r2.serverImg + ctx_r2.event.image3, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
+} }
+function EventDetailComponent_img_7_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "img", 11);
+} if (rf & 2) {
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r3.event.imageUrl && _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0))("src", ctx_r3.event.imageUrl, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
 } }
 class EventDetailComponent {
     constructor(eventService, activatedRoute) {
@@ -1215,7 +1237,7 @@ class EventDetailComponent {
     }
 }
 EventDetailComponent.ɵfac = function EventDetailComponent_Factory(t) { return new (t || EventDetailComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_1__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["ActivatedRoute"])); };
-EventDetailComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: EventDetailComponent, selectors: [["app-event-detail"]], decls: 9, vars: 6, consts: [["fxLayout", "row", "fxLayout.xs", "column", 1, "container"], ["fxLayout", "column", "fxLayout.xs", "row", "fxFlex", "50", "fxFlex.xs", "50", "id", "event"], [3, "details", "inputEvent"], ["fxLayout", "row", "fxLayoutGap", "5px"], ["alt", "image 1", 3, "ngStyle", "src", 4, "ngIf"], ["alt", "image 2", 3, "ngStyle", "src", 4, "ngIf"], ["fxFlex", "50", "fxFlex.xs", "50"], [3, "event"], ["alt", "image 1", 3, "ngStyle", "src"], ["alt", "image 2", 3, "ngStyle", "src"]], template: function EventDetailComponent_Template(rf, ctx) { if (rf & 1) {
+EventDetailComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: EventDetailComponent, selectors: [["app-event-detail"]], decls: 10, vars: 7, consts: [["fxLayout", "row", "fxLayout.xs", "column", 1, "container"], ["fxLayout", "column", "fxLayout.xs", "row", "fxFlex", "50", "fxFlex.xs", "50", "id", "event"], [3, "details", "inputEvent"], ["fxLayout", "row", "fxLayoutGap", "5px"], ["alt", "image 1", 3, "ngStyle", "src", 4, "ngIf"], ["alt", "image 2", 3, "ngStyle", "src", 4, "ngIf"], ["alt", "image url", 3, "ngStyle", "src", 4, "ngIf"], ["fxFlex", "50", "fxFlex.xs", "50"], [3, "event"], ["alt", "image 1", 3, "ngStyle", "src"], ["alt", "image 2", 3, "ngStyle", "src"], ["alt", "image url", 3, "ngStyle", "src"]], template: function EventDetailComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "app-event", 2);
@@ -1223,10 +1245,11 @@ EventDetailComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, EventDetailComponent_img_4_Template, 1, 3, "img", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, EventDetailComponent_img_5_Template, 1, 3, "img", 5);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](6, EventDetailComponent_img_6_Template, 1, 3, "img", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](7, EventDetailComponent_img_7_Template, 1, 3, "img", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "div", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](8, "app-event-chat", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "div", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](9, "app-event-chat", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -1238,6 +1261,8 @@ EventDetailComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdef
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.event.image2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.event.image3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.event.imageUrl);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("event", ctx.event);
     } }, directives: [_angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_3__["DefaultLayoutDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_3__["DefaultFlexDirective"], _event_event_component__WEBPACK_IMPORTED_MODULE_4__["EventComponent"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_3__["DefaultLayoutGapDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _event_chat_event_chat_component__WEBPACK_IMPORTED_MODULE_6__["EventChatComponent"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgStyle"], _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_7__["DefaultStyleDirective"]], styles: [".container[_ngcontent-%COMP%] {\n  height: 90vh;\n}\n\n@media only screen and (max-width: 500px) {\n  \n  img[_ngcontent-%COMP%] {\n    display: none;\n  }\n\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LWRldGFpbC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsWUFBWTtBQUNkOztBQUVBO0VBQ0UsdUJBQXVCO0VBQ3ZCO0lBQ0UsYUFBYTtFQUNmOztBQUVGIiwiZmlsZSI6ImV2ZW50LWRldGFpbC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmNvbnRhaW5lciB7XG4gIGhlaWdodDogOTB2aDtcbn1cblxuQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiA1MDBweCkge1xuICAvKiBGb3IgbW9iaWxlIHBob25lczogKi9cbiAgaW1nIHtcbiAgICBkaXNwbGF5OiBub25lO1xuICB9XG5cbn0iXX0= */"] });
@@ -1488,59 +1513,121 @@ class Event {
     setName(name) {
         this.name = name;
     }
+    getName() {
+        return this.name;
+    }
     setDateDebut(dateDebut) {
         this.dateDebut = new Date(dateDebut);
+    }
+    getDateDebut() {
+        return this.dateDebut;
     }
     setDateDebutString(dateDebutString) {
         this.dateDebutString = dateDebutString;
     }
+    getDateDebutString() {
+        return this.dateDebutString;
+    }
     setDateFin(dateFin) {
-        this.dateFin = new Date(dateFin);
+        if (dateFin !== null) {
+            this.dateFin = new Date(dateFin);
+        }
+        else {
+            this.dateFin = null;
+        }
+    }
+    getDateFin() {
+        return this.dateFin;
     }
     setDateFinString(dateFinString) {
         this.dateFinString = dateFinString;
     }
+    getDateFinString() {
+        return this.dateFinString;
+    }
     setType(type) {
         this.type = type;
+    }
+    getType() {
+        return this.type;
     }
     setDescription(description) {
         this.description = description;
     }
+    getDescription() {
+        return this.description;
+    }
     setLieu(lieu) {
         this.lieu = lieu;
+    }
+    getLieu() {
+        return this.lieu;
     }
     setLatitude(latitude) {
         this.latitude = latitude;
     }
+    getLatitude() {
+        return this.latitude;
+    }
     setLongitude(longitude) {
         this.longitude = longitude;
+    }
+    getLongitude() {
+        return this.longitude;
     }
     setCreateur(createur) {
         this.createur = createur;
     }
+    getCreateur() {
+        return this.createur;
+    }
     setCreateByOwner(create) {
         this.createByOwner = create;
+    }
+    getCreateByOwner() {
+        return this.createByOwner;
     }
     setEmailCreateur(email) {
         this.emailCreateur = email;
     }
+    getEmailCreateur() {
+        return this.emailCreateur;
+    }
     setScope(scope) {
         this.scope = scope;
+    }
+    getScope() {
+        return this.scope;
     }
     setImageUrl(imageUrl) {
         this.imageUrl = imageUrl;
     }
+    getImageUrl() {
+        return this.imageUrl;
+    }
     setSpaceAndTime(space_and_time) {
         this.space_and_time = space_and_time;
+    }
+    getSpaceAndTime() {
+        return this.space_and_time;
     }
     setInvites(invites) {
         this.invites = invites;
     }
+    getInvites() {
+        return this.invites;
+    }
     setPricingInfo(pricingInfo) {
         this.pricing_info = pricingInfo;
     }
+    getPricingInfo() {
+        return this.pricing_info;
+    }
     setTimeLeft(timeLeft) {
         this.timeLeft = timeLeft;
+    }
+    getTimeLeft() {
+        return this.timeLeft;
     }
 }
 
@@ -2282,7 +2369,7 @@ const Events = [
     'Sport',
     'Festival musical',
     'Festival sportif',
-    'Spéctacle',
+    'Spectacle',
     'Exposition',
     'Salon',
     'Divers'
@@ -2772,7 +2859,7 @@ class MapComponent {
             iconUrl: 'assets/icon-red.png',
         });
     }
-    BackToPosition() {
+    backToPosition() {
         const currentPos = this.markerService.createPoint({
             latitude: this.currentLatitude,
             longitude: this.currentLongitude,
@@ -2791,7 +2878,7 @@ MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, MapComponent_div_1_Template, 1, 1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "button", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_2_listener() { return ctx.BackToPosition(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_2_listener() { return ctx.backToPosition(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3, "Revenir \u00E0 ma position");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
