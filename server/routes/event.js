@@ -2,6 +2,7 @@ const storage = require('../upload/multer');
 const router = require('express').Router();
 const {
   getAll,
+  get,
   create,
   modify,
   deleteOne,
@@ -15,6 +16,7 @@ router.post('/uploadImages', storage.fields([{ name: 'image1' }, { name: 'image2
   uploadImages)
 router.put('/modify', modify);
 router.get('/getAll', getAll);
+router.post('/get', get);
 router.delete('/deleteOne', deleteOne);
 router.get('/getMessages', getMessages);
 router.post('/saveMessage', createMessage);

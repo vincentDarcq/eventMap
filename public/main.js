@@ -54,10 +54,8 @@ class EventsApiService {
     //   })
     // }
     callOpenData() {
-        // const date = new Date("2021-11-09T19:30:00").toLocaleString()
-        // console.log(date)
-        for (let i = 0; i < 3000; i += 20) {
-            this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.tags=concert&refine.date_start=2022&timezone=Europe%2FParis`)
+        for (let i = 0; i < 1000; i += 20) {
+            this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.date_start=2022&timezone=Europe%2FParis`)
                 .subscribe(res => {
                 res.records.forEach(element => {
                     const f = element.fields;
@@ -73,10 +71,45 @@ class EventsApiService {
                     event.setSpaceAndTime(f.space_time_info);
                     event.setCreateByOwner(false);
                     event.setPricingInfo(f.pricing_info);
-                    event.setType("Concert");
                     event.setScope("public");
                     event.setImageUrl(f.image);
-                    this.eventService.createEvent(event);
+                    if (typeof f.tags !== 'undefined') {
+                        const types = f.tags.split(",");
+                        if (types.indexOf("Théâtre Fémina") !== -1 || types.indexOf("Le Théâtre") !== -1 || types.indexOf("Incandescences") !== -1 || types.indexOf("SPECTACLE") !== -1 || types.indexOf("spectacle de danse") !== -1 || types.indexOf("Théâtre de Thalie") !== -1 || types.indexOf("rire") !== -1 || types.indexOf("danse") !== -1 || types.indexOf("spectacle") !== -1 || types.indexOf("Spectacle") !== -1) {
+                            event.setType("Spectacle");
+                        }
+                        if (types.indexOf("le petit théâtre Cugandais") !== -1 || types.indexOf("THÉÂTRE") !== -1 || types.indexOf("théâtre") !== -1 || types.indexOf("théatre") !== -1 || types.indexOf("theatre") !== -1 || types.indexOf("Théâtre") !== -1 || types.indexOf("théâtre musical") !== -1) {
+                            event.setType("Theatre");
+                        }
+                        if (types.indexOf("Musique") !== -1 || types.indexOf("CONCERT-DECOUVERTE") !== -1 || types.indexOf("pop") !== -1 || types.indexOf("Rap / Hip Hop") !== -1 || types.indexOf("#concert") !== -1 || types.indexOf("Thrash Metal") !== -1 || types.indexOf("Rock") !== -1 || types.indexOf("RAP") !== -1 || types.indexOf("rap") !== -1 || types.indexOf("JAZZ") !== -1 || types.indexOf("jazz") !== -1 || types.indexOf("guitare classique") !== -1 || types.indexOf("CONCERT") !== -1 || types.indexOf("orchestre") !== -1 || types.indexOf("guitariste chanteuse") !== -1 || types.indexOf("musique") !== -1 || types.indexOf("concert") !== -1 || types.indexOf("Concert") !== -1 || types.indexOf("Bachar Mar-Khalifé") !== -1) {
+                            event.setType("Concert");
+                        }
+                        if (types.indexOf("cirque") !== -1 || types.indexOf("Cirque") !== -1) {
+                            event.setType("Cirque");
+                        }
+                        if (types.indexOf("Hockey sur glace") !== -1 || types.indexOf("basket féminin") !== -1 || types.indexOf("sport") !== -1 || types.indexOf("skate") !== -1 || types.indexOf("Spéléologie") !== -1) {
+                            event.setType("Sport");
+                        }
+                        if (types.indexOf("Exposition") !== -1 || types.indexOf("exposition") !== -1) {
+                            event.setType("Exposition");
+                        }
+                        if (types.indexOf("visite guidée") !== -1 || types.indexOf("Visite") !== -1 || types.indexOf("visite") !== -1) {
+                            event.setType("Visite");
+                        }
+                        if (types.indexOf("Salon") !== -1 || types.indexOf("salon") !== -1) {
+                            event.setType("Salon");
+                        }
+                        if (types.indexOf("Essonne") !== -1 || types.indexOf("opera") !== -1 || types.indexOf("opéra") !== -1) {
+                            event.setType("Opera");
+                        }
+                        if (types.indexOf("Cinéma") !== -1 || types.indexOf("Cinema") !== -1 || types.indexOf("cinema") !== -1 || types.indexOf("cinéma") !== -1) {
+                            event.setType("Cinema");
+                        }
+                        if (event.getType() == null) {
+                            event.setType("Divers");
+                        }
+                        this.eventService.createEvent(event);
+                    }
                 });
             });
         }
@@ -264,7 +297,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "qCKp");
 /* harmony import */ var _models_event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../models/event */ "QrpZ");
 /* harmony import */ var _models_left_time__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../models/left-time */ "Nvv0");
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _models_mapSquare__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../models/mapSquare */ "Ul80");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+
 
 
 
@@ -280,8 +315,14 @@ class EventService {
         this.bounds = new rxjs__WEBPACK_IMPORTED_MODULE_2__["Subject"]();
         this.events = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](Array());
         this.currentDate = new Date();
+        this.getBounds().subscribe(bounds => {
+            const mapSquar = new _models_mapSquare__WEBPACK_IMPORTED_MODULE_5__["mapSquare"](bounds.getSouthWest().lat, bounds.getNorthWest().lat, bounds.getSouthWest().lng, bounds.getSouthEast().lng);
+            this.getEvents(mapSquar);
+        });
+    }
+    getEvents(map) {
         let ev = new Array();
-        this.http.get('/api/event/getAll').subscribe((events) => {
+        this.http.post('/api/event/get', map).subscribe((events) => {
             for (let event of Object.keys(events)) {
                 const e = events[event];
                 let newEvent = new _models_event__WEBPACK_IMPORTED_MODULE_3__["Event"](e._id, e.name, new Date(e.dateDebut), e.beginTime, new Date(e.dateFin), e.endTime, e.type, e.description, e.lieu, e.latitude, e.longitude, e.createur, e.emailCreateur, this.timeBefore(e.dateDebut), e.createByOwner);
@@ -315,7 +356,6 @@ class EventService {
                 }
                 else {
                     if (newEvent.getTimeLeft().days < 0) {
-                        console.log(newEvent.getTimeLeft().days);
                         this.deleteEvent(newEvent._id);
                     }
                     else {
@@ -426,11 +466,7 @@ class EventService {
         });
     }
     getEvent(id) {
-        for (let event of this.events.value) {
-            if (event._id === id) {
-                return event;
-            }
-        }
+        return this.events.value.find(e => e._id === id);
     }
     setBounds(bounds) {
         this.zone.run(() => {
@@ -462,14 +498,14 @@ class EventService {
         return this.eventNameFromTopBar;
     }
 }
-EventService.ɵfac = function EventService_Factory(t) { return new (t || EventService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"])); };
+EventService.ɵfac = function EventService_Factory(t) { return new (t || EventService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_6__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"])); };
 EventService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: EventService, factory: EventService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵsetClassMetadata"](EventService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"],
         args: [{
                 providedIn: 'root'
             }]
-    }], function () { return [{ type: _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }]; }, null); })();
+    }], function () { return [{ type: _angular_common_http__WEBPACK_IMPORTED_MODULE_6__["HttpClient"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_1__["NgZone"] }]; }, null); })();
 
 
 /***/ }),
@@ -998,6 +1034,7 @@ class EventListComponent {
         this.eventService.getBounds().subscribe((b) => {
             this.bounds = b;
             this.newBounds = true;
+            this.upgradeFilteredTypeEvents();
         });
     }
     ngDoCheck() {
@@ -1015,12 +1052,7 @@ class EventListComponent {
         const inputFiltersType = changes.inputFiltersType;
         const inputFiltersDate = changes.inputFiltersDate;
         if (typeof inputFiltersType !== 'undefined' && inputFiltersType.currentValue !== null && typeof inputFiltersType.currentValue[0] !== 'undefined') {
-            this.eventsOnMapFiltered = new Array();
-            for (let event of this.eventsOnMap) {
-                if (this.inputFiltersType.indexOf(event.type) !== -1) {
-                    this.eventsOnMapFiltered.push(event);
-                }
-            }
+            this.upgradeFilteredTypeEvents();
             this.filter = true;
         }
         else if (typeof inputFiltersDate !== 'undefined' && inputFiltersDate.currentValue !== null && typeof inputFiltersDate.currentValue[0] !== 'undefined') {
@@ -1100,6 +1132,16 @@ class EventListComponent {
         else {
             this.eventsOnMapFiltered = new Array();
             this.filter = false;
+        }
+    }
+    upgradeFilteredTypeEvents() {
+        if (this.inputFiltersType !== null) {
+            this.eventsOnMapFiltered = new Array();
+            for (let event of this.eventsOnMap) {
+                if (this.inputFiltersType.indexOf(event.type) !== -1) {
+                    this.eventsOnMapFiltered.push(event);
+                }
+            }
         }
     }
     displayEvent(index) {
@@ -1823,61 +1865,6 @@ NetworkService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineIn
 
 /***/ }),
 
-/***/ "Sv0b":
-/*!****************************************************!*\
-  !*** ./src/app/shared/services/markers.service.ts ***!
-  \****************************************************/
-/*! exports provided: MarkersService */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MarkersService", function() { return MarkersService; });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "4R65");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
-
-
-
-class MarkersService {
-    constructor() { }
-    addBlueMarker(Latitude, Longitude) {
-        const marker = new leaflet__WEBPACK_IMPORTED_MODULE_1__["Marker"]([Latitude, Longitude], {
-            title: "your position", riseOnHover: true, riseOffset: 2
-        }).setIcon(Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["icon"])({
-            iconSize: [25, 41],
-            iconAnchor: [13, 41],
-            iconUrl: 'assets/marker-icon.png',
-        }));
-        return marker;
-    }
-    getRedIcon() {
-        return Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["icon"])({
-            iconSize: [50, 50],
-            iconAnchor: [13, 41],
-            iconUrl: 'assets/icon-red.png',
-        });
-    }
-    createPoint(mapPoint) {
-        const coordinates = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["latLng"])([
-            mapPoint.latitude,
-            mapPoint.longitude,
-        ]);
-        return coordinates;
-    }
-}
-MarkersService.ɵfac = function MarkersService_Factory(t) { return new (t || MarkersService)(); };
-MarkersService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: MarkersService, factory: MarkersService.ɵfac, providedIn: 'root' });
-/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](MarkersService, [{
-        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
-        args: [{
-                providedIn: 'root'
-            }]
-    }], function () { return []; }, null); })();
-
-
-/***/ }),
-
 /***/ "Sy1n":
 /*!**********************************!*\
   !*** ./src/app/app.component.ts ***!
@@ -1921,6 +1908,28 @@ AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
                 styleUrls: ['./app.component.css'],
             }]
     }], function () { return [{ type: _shared_services_auth_service__WEBPACK_IMPORTED_MODULE_1__["AuthService"] }, { type: _shared_services_meta_and_title_service__WEBPACK_IMPORTED_MODULE_2__["MetaAndTitleService"] }]; }, null); })();
+
+
+/***/ }),
+
+/***/ "Ul80":
+/*!********************************************!*\
+  !*** ./src/app/shared/models/mapSquare.ts ***!
+  \********************************************/
+/*! exports provided: mapSquare */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapSquare", function() { return mapSquare; });
+class mapSquare {
+    constructor(latMin, latMax, longMin, longMax) {
+        this.latMin = latMin;
+        this.latMax = latMax;
+        this.longMin = longMin;
+        this.longMax = longMax;
+    }
+}
 
 
 /***/ }),
@@ -2332,16 +2341,16 @@ GeoService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInject
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Events", function() { return Events; });
 const Events = [
-    'Teuf d\'appart',
-    'Soirée',
-    'Anniversaire',
     'Concert',
     'Sport',
-    'Festival musical',
-    'Festival sportif',
+    'Theatre',
     'Spectacle',
+    'Cirque',
     'Exposition',
     'Salon',
+    'Visite',
+    'Opera',
+    'Cinema',
     'Divers'
 ];
 
@@ -2603,6 +2612,61 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵdefineInjecto
 
 /***/ }),
 
+/***/ "ZL7T":
+/*!************************************************!*\
+  !*** ./src/app/shared/services/map.service.ts ***!
+  \************************************************/
+/*! exports provided: MapService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MapService", function() { return MapService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "4R65");
+/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+class MapService {
+    constructor() { }
+    addBlueMarker(Latitude, Longitude) {
+        const marker = new leaflet__WEBPACK_IMPORTED_MODULE_1__["Marker"]([Latitude, Longitude], {
+            title: "your position", riseOnHover: true, riseOffset: 2
+        }).setIcon(Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["icon"])({
+            iconSize: [25, 41],
+            iconAnchor: [13, 41],
+            iconUrl: 'assets/marker-icon.png',
+        }));
+        return marker;
+    }
+    getRedIcon() {
+        return Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["icon"])({
+            iconSize: [50, 50],
+            iconAnchor: [13, 41],
+            iconUrl: 'assets/icon-red.png',
+        });
+    }
+    createPoint(mapPoint) {
+        const coordinates = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["latLng"])([
+            mapPoint.latitude,
+            mapPoint.longitude,
+        ]);
+        return coordinates;
+    }
+}
+MapService.ɵfac = function MapService_Factory(t) { return new (t || MapService)(); };
+MapService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: MapService, factory: MapService.ɵfac, providedIn: 'root' });
+/*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](MapService, [{
+        type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
+        args: [{
+                providedIn: 'root'
+            }]
+    }], function () { return []; }, null); })();
+
+
+/***/ }),
+
 /***/ "cNoH":
 /*!**************************************!*\
   !*** ./src/app/map/map.component.ts ***!
@@ -2618,7 +2682,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _shared_models_map_point_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/models/map-point.model */ "1brn");
 /* harmony import */ var _shared_models_event__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/models/event */ "QrpZ");
-/* harmony import */ var _shared_services_markers_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/services/markers.service */ "Sv0b");
+/* harmony import */ var _shared_services_map_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/services/map.service */ "ZL7T");
 /* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
 /* harmony import */ var _shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/services/events-api.service */ "0nKt");
 /* harmony import */ var _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/flex-layout/flex */ "XiUz");
@@ -2647,8 +2711,8 @@ function MapComponent_div_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("leafletOptions", ctx_r0.mapOptions);
 } }
 class MapComponent {
-    constructor(markerService, eventService, zone, apiService) {
-        this.markerService = markerService;
+    constructor(mapService, eventService, zone, apiService) {
+        this.mapService = mapService;
         this.eventService = eventService;
         this.zone = zone;
         this.apiService = apiService;
@@ -2686,19 +2750,17 @@ class MapComponent {
     }
     onMapReady(map) {
         this.map = map.on('moveend', () => {
-            this.bounds = map.getBounds();
-            this.eventService.setBounds(this.bounds);
+            this.eventService.setBounds(map.getBounds());
         });
-        this.bounds = map.getBounds();
-        this.eventService.setBounds(this.bounds);
-        const marker = this.markerService.addBlueMarker(this.currentLatitude, this.currentLongitude);
+        this.eventService.setBounds(map.getBounds());
+        const marker = this.mapService.addBlueMarker(this.currentLatitude, this.currentLongitude);
         marker.addTo(this.map).bindTooltip("votre position");
     }
     ngOnChanges(changes) {
         const ptZoom = changes.inputEventToZoom;
         if (typeof ptZoom !== 'undefined') {
             if (typeof ptZoom.currentValue !== 'undefined') {
-                const markerZoom = this.markerService.createPoint({
+                const markerZoom = this.mapService.createPoint({
                     latitude: ptZoom.currentValue.latitude,
                     longitude: ptZoom.currentValue.longitude,
                     address: ptZoom.currentValue.address
@@ -2806,7 +2868,7 @@ class MapComponent {
         };
     }
     createMarker(e) {
-        const point = this.markerService.createPoint(this.mapPoint);
+        const point = this.mapService.createPoint(this.mapPoint);
         let time = e.timeLeft.days + "j " + e.timeLeft.hours + "h " + e.timeLeft.minutes + "min";
         const layer = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["marker"])(point).setIcon(this.getRedIcon())
             .addTo(this.map)
@@ -2830,7 +2892,7 @@ class MapComponent {
         });
     }
     backToPosition() {
-        const currentPos = this.markerService.createPoint({
+        const currentPos = this.mapService.createPoint({
             latitude: this.currentLatitude,
             longitude: this.currentLongitude,
             address: '',
@@ -2843,7 +2905,7 @@ class MapComponent {
         }
     }
 }
-MapComponent.ɵfac = function MapComponent_Factory(t) { return new (t || MapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_markers_service__WEBPACK_IMPORTED_MODULE_4__["MarkersService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"])); };
+MapComponent.ɵfac = function MapComponent_Factory(t) { return new (t || MapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_map_service__WEBPACK_IMPORTED_MODULE_4__["MapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"])); };
 MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", inputEventToZoom: "inputEventToZoom", inputEvents: "inputEvents" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 4, vars: 1, consts: [["fxLayout", "column", "fxLayoutAlign", "center center"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, MapComponent_div_1_Template, 1, 1, "div", 1);
@@ -2863,7 +2925,7 @@ MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineCompo
                 templateUrl: './map.component.html',
                 styleUrls: ['./map.component.css'],
             }]
-    }], function () { return [{ type: _shared_services_markers_service__WEBPACK_IMPORTED_MODULE_4__["MarkersService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"] }, { type: _shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"] }]; }, { inputFiltersType: [{
+    }], function () { return [{ type: _shared_services_map_service__WEBPACK_IMPORTED_MODULE_4__["MapService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"] }, { type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"] }, { type: _shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"] }]; }, { inputFiltersType: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }], inputFiltersDate: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
@@ -3462,26 +3524,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! leaflet */ "4R65");
 /* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
-/* harmony import */ var _shared_services_markers_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/services/markers.service */ "Sv0b");
+/* harmony import */ var _shared_services_map_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/services/map.service */ "ZL7T");
 /* harmony import */ var _shared_services_geo_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/services/geo.service */ "XNk0");
 /* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
-/* harmony import */ var _shared_services_network_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/services/network.service */ "SVtl");
-/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../shared/services/user.service */ "kmKP");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/flex-layout/flex */ "XiUz");
-/* harmony import */ var _angular_material_radio__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/material/radio */ "QibW");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/material/form-field */ "kmnG");
-/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/input */ "qFsG");
-/* harmony import */ var _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/material/datepicker */ "iadO");
-/* harmony import */ var ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ngx-material-timepicker */ "r3oX");
-/* harmony import */ var _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/material/autocomplete */ "/1cH");
-/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/flex-layout/extended */ "znSr");
-/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/material/button */ "bTqV");
-/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/material/select */ "d3UM");
-/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/material/core */ "FKr1");
-/* harmony import */ var _asymmetrik_ngx_leaflet__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @asymmetrik/ngx-leaflet */ "OwhE");
-
+/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../shared/services/user.service */ "kmKP");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/router */ "tyNb");
+/* harmony import */ var _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/flex-layout/flex */ "XiUz");
+/* harmony import */ var _angular_material_radio__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/material/radio */ "QibW");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/material/form-field */ "kmnG");
+/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/material/input */ "qFsG");
+/* harmony import */ var _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/datepicker */ "iadO");
+/* harmony import */ var ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ngx-material-timepicker */ "r3oX");
+/* harmony import */ var _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/material/autocomplete */ "/1cH");
+/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/flex-layout/extended */ "znSr");
+/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/material/button */ "bTqV");
+/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/material/select */ "d3UM");
+/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/material/core */ "FKr1");
+/* harmony import */ var _asymmetrik_ngx_leaflet__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @asymmetrik/ngx-leaflet */ "OwhE");
 
 
 
@@ -3633,11 +3693,10 @@ function EventFormComponent_mat_option_51_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", result_r27.address, " ");
 } }
 class EventFormComponent {
-    constructor(markerService, geoService, eventService, networkService, userService, activatedRoute, router) {
+    constructor(markerService, geoService, eventService, userService, activatedRoute, router) {
         this.markerService = markerService;
         this.geoService = geoService;
         this.eventService = eventService;
-        this.networkService = networkService;
         this.userService = userService;
         this.activatedRoute = activatedRoute;
         this.router = router;
@@ -3835,7 +3894,7 @@ class EventFormComponent {
         }
     }
 }
-EventFormComponent.ɵfac = function EventFormComponent_Factory(t) { return new (t || EventFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_markers_service__WEBPACK_IMPORTED_MODULE_7__["MarkersService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_geo_service__WEBPACK_IMPORTED_MODULE_8__["GeoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_9__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_network_service__WEBPACK_IMPORTED_MODULE_10__["NetworkService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_11__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_12__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_12__["Router"])); };
+EventFormComponent.ɵfac = function EventFormComponent_Factory(t) { return new (t || EventFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_map_service__WEBPACK_IMPORTED_MODULE_7__["MapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_geo_service__WEBPACK_IMPORTED_MODULE_8__["GeoService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_9__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_10__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_11__["ActivatedRoute"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_11__["Router"])); };
 EventFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: EventFormComponent, selectors: [["app-event-form"]], viewQuery: function EventFormComponent_Query(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstaticViewQuery"](_c0, true);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstaticViewQuery"](_c1, true);
@@ -4012,7 +4071,7 @@ EventFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.searchResults);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngModel", ctx.newEvent.description);
-    } }, directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_6__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgForm"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_13__["DefaultLayoutDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_13__["DefaultLayoutAlignDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_13__["DefaultLayoutGapDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_13__["DefaultFlexDirective"], _angular_material_radio__WEBPACK_IMPORTED_MODULE_14__["MatRadioGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["RequiredValidator"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgModel"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_15__["NgIf"], _angular_material_radio__WEBPACK_IMPORTED_MODULE_14__["MatRadioButton"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_16__["MatFormField"], _angular_material_input__WEBPACK_IMPORTED_MODULE_17__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["DefaultValueAccessor"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_18__["MatDatepickerInput"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_18__["MatDatepickerToggle"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_16__["MatSuffix"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_18__["MatDatepicker"], ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_19__["TimepickerDirective"], ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_19__["NgxMaterialTimepickerComponent"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_20__["MatAutocompleteTrigger"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_20__["MatAutocomplete"], _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_21__["DefaultShowHideDirective"], _angular_material_button__WEBPACK_IMPORTED_MODULE_22__["MatButton"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_16__["MatLabel"], _angular_material_select__WEBPACK_IMPORTED_MODULE_23__["MatSelect"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormControlDirective"], _angular_material_core__WEBPACK_IMPORTED_MODULE_24__["MatOption"], _asymmetrik_ngx_leaflet__WEBPACK_IMPORTED_MODULE_25__["LeafletDirective"]], styles: ["form[_ngcontent-%COMP%]{\n  height: 90vh;\n}\n\nspan[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n\nspan.error-msg[_ngcontent-%COMP%] {\n  color: red;\n}\n\n#map[_ngcontent-%COMP%] {\n  height: 200px;\n  width: 100%;\n}\n\n  .mat-form-field-appearance-legacy .mat-form-field-wrapper .mat-form-field-underline{\n  display: none;\n}\n\n.fa[_ngcontent-%COMP%] {\n  padding: 0px;\n  margin: 0px;\n  cursor: pointer;\n}\n\nimg[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LWZvcm0uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLFlBQVk7QUFDZDs7QUFFQTtFQUNFLGVBQWU7QUFDakI7O0FBRUE7RUFDRSxVQUFVO0FBQ1o7O0FBRUE7RUFDRSxhQUFhO0VBQ2IsV0FBVztBQUNiOztBQUVBO0VBQ0UsYUFBYTtBQUNmOztBQUVBO0VBQ0UsWUFBWTtFQUNaLFdBQVc7RUFDWCxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsV0FBVztFQUNYLFlBQVk7QUFDZCIsImZpbGUiOiJldmVudC1mb3JtLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyJmb3Jte1xuICBoZWlnaHQ6IDkwdmg7XG59XG5cbnNwYW4ge1xuICBjdXJzb3I6IHBvaW50ZXI7XG59XG5cbnNwYW4uZXJyb3ItbXNnIHtcbiAgY29sb3I6IHJlZDtcbn1cblxuI21hcCB7XG4gIGhlaWdodDogMjAwcHg7XG4gIHdpZHRoOiAxMDAlO1xufVxuXG46Om5nLWRlZXAgLm1hdC1mb3JtLWZpZWxkLWFwcGVhcmFuY2UtbGVnYWN5IC5tYXQtZm9ybS1maWVsZC13cmFwcGVyIC5tYXQtZm9ybS1maWVsZC11bmRlcmxpbmV7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbi5mYSB7XG4gIHBhZGRpbmc6IDBweDtcbiAgbWFyZ2luOiAwcHg7XG4gIGN1cnNvcjogcG9pbnRlcjtcbn1cblxuaW1nIHtcbiAgd2lkdGg6IDMwcHg7XG4gIGhlaWdodDogMzBweDtcbn1cbiJdfQ== */"] });
+    } }, directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_6__["ɵangular_packages_forms_forms_y"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatusGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgForm"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultLayoutDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultLayoutAlignDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultLayoutGapDirective"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultFlexDirective"], _angular_material_radio__WEBPACK_IMPORTED_MODULE_13__["MatRadioGroup"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["RequiredValidator"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["NgModel"], _angular_common__WEBPACK_IMPORTED_MODULE_14__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_14__["NgIf"], _angular_material_radio__WEBPACK_IMPORTED_MODULE_13__["MatRadioButton"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_15__["MatFormField"], _angular_material_input__WEBPACK_IMPORTED_MODULE_16__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["DefaultValueAccessor"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_17__["MatDatepickerInput"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_17__["MatDatepickerToggle"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_15__["MatSuffix"], _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_17__["MatDatepicker"], ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_18__["TimepickerDirective"], ngx_material_timepicker__WEBPACK_IMPORTED_MODULE_18__["NgxMaterialTimepickerComponent"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_19__["MatAutocompleteTrigger"], _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_19__["MatAutocomplete"], _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_20__["DefaultShowHideDirective"], _angular_material_button__WEBPACK_IMPORTED_MODULE_21__["MatButton"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_15__["MatLabel"], _angular_material_select__WEBPACK_IMPORTED_MODULE_22__["MatSelect"], _angular_forms__WEBPACK_IMPORTED_MODULE_6__["FormControlDirective"], _angular_material_core__WEBPACK_IMPORTED_MODULE_23__["MatOption"], _asymmetrik_ngx_leaflet__WEBPACK_IMPORTED_MODULE_24__["LeafletDirective"]], styles: ["form[_ngcontent-%COMP%]{\n  height: 90vh;\n}\n\nspan[_ngcontent-%COMP%] {\n  cursor: pointer;\n}\n\nspan.error-msg[_ngcontent-%COMP%] {\n  color: red;\n}\n\n#map[_ngcontent-%COMP%] {\n  height: 200px;\n  width: 100%;\n}\n\n  .mat-form-field-appearance-legacy .mat-form-field-wrapper .mat-form-field-underline{\n  display: none;\n}\n\n.fa[_ngcontent-%COMP%] {\n  padding: 0px;\n  margin: 0px;\n  cursor: pointer;\n}\n\nimg[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 30px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LWZvcm0uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLFlBQVk7QUFDZDs7QUFFQTtFQUNFLGVBQWU7QUFDakI7O0FBRUE7RUFDRSxVQUFVO0FBQ1o7O0FBRUE7RUFDRSxhQUFhO0VBQ2IsV0FBVztBQUNiOztBQUVBO0VBQ0UsYUFBYTtBQUNmOztBQUVBO0VBQ0UsWUFBWTtFQUNaLFdBQVc7RUFDWCxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsV0FBVztFQUNYLFlBQVk7QUFDZCIsImZpbGUiOiJldmVudC1mb3JtLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyJmb3Jte1xuICBoZWlnaHQ6IDkwdmg7XG59XG5cbnNwYW4ge1xuICBjdXJzb3I6IHBvaW50ZXI7XG59XG5cbnNwYW4uZXJyb3ItbXNnIHtcbiAgY29sb3I6IHJlZDtcbn1cblxuI21hcCB7XG4gIGhlaWdodDogMjAwcHg7XG4gIHdpZHRoOiAxMDAlO1xufVxuXG46Om5nLWRlZXAgLm1hdC1mb3JtLWZpZWxkLWFwcGVhcmFuY2UtbGVnYWN5IC5tYXQtZm9ybS1maWVsZC13cmFwcGVyIC5tYXQtZm9ybS1maWVsZC11bmRlcmxpbmV7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbi5mYSB7XG4gIHBhZGRpbmc6IDBweDtcbiAgbWFyZ2luOiAwcHg7XG4gIGN1cnNvcjogcG9pbnRlcjtcbn1cblxuaW1nIHtcbiAgd2lkdGg6IDMwcHg7XG4gIGhlaWdodDogMzBweDtcbn1cbiJdfQ== */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](EventFormComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
@@ -4020,7 +4079,7 @@ EventFormComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
                 templateUrl: './event-form.component.html',
                 styleUrls: ['./event-form.component.css']
             }]
-    }], function () { return [{ type: _shared_services_markers_service__WEBPACK_IMPORTED_MODULE_7__["MarkersService"] }, { type: _shared_services_geo_service__WEBPACK_IMPORTED_MODULE_8__["GeoService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_9__["EventService"] }, { type: _shared_services_network_service__WEBPACK_IMPORTED_MODULE_10__["NetworkService"] }, { type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_11__["UserService"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_12__["ActivatedRoute"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_12__["Router"] }]; }, { inputRef1: [{
+    }], function () { return [{ type: _shared_services_map_service__WEBPACK_IMPORTED_MODULE_7__["MapService"] }, { type: _shared_services_geo_service__WEBPACK_IMPORTED_MODULE_8__["GeoService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_9__["EventService"] }, { type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_10__["UserService"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_11__["ActivatedRoute"] }, { type: _angular_router__WEBPACK_IMPORTED_MODULE_11__["Router"] }]; }, { inputRef1: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"],
             args: ['fileInput1', { static: true }]
         }], inputRef2: [{
@@ -4628,24 +4687,20 @@ AppRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineI
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MainComponent", function() { return MainComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var _shared_models_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/models/event */ "QrpZ");
-/* harmony import */ var _shared_models_event_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/models/event-list */ "XQ/Y");
-/* harmony import */ var _shared_models_date_list__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../shared/models/date-list */ "Qtnr");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
-/* harmony import */ var _shared_models_user_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/models/user.model */ "KJJU");
-/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/services/user.service */ "kmKP");
-/* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
-/* harmony import */ var _shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../shared/services/events-api.service */ "0nKt");
-/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/material/form-field */ "kmnG");
-/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/material/select */ "d3UM");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/flex-layout/flex */ "XiUz");
-/* harmony import */ var _event_list_event_list_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../event-list/event-list.component */ "JESc");
-/* harmony import */ var _map_map_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../map/map.component */ "cNoH");
-/* harmony import */ var _event_event_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../event/event.component */ "p/l/");
-/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/material/core */ "FKr1");
-
-
+/* harmony import */ var _shared_models_event_list__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/models/event-list */ "XQ/Y");
+/* harmony import */ var _shared_models_date_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/models/date-list */ "Qtnr");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _shared_models_user_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../shared/models/user.model */ "KJJU");
+/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../shared/services/user.service */ "kmKP");
+/* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
+/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material/form-field */ "kmnG");
+/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/material/select */ "d3UM");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/flex-layout/flex */ "XiUz");
+/* harmony import */ var _event_list_event_list_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../event-list/event-list.component */ "JESc");
+/* harmony import */ var _map_map_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../map/map.component */ "cNoH");
+/* harmony import */ var _event_event_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../event/event.component */ "p/l/");
+/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/material/core */ "FKr1");
 
 
 
@@ -4684,82 +4739,41 @@ function MainComponent_mat_option_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](date_r3);
 } }
 class MainComponent {
-    constructor(userService, eventService, eventsApiService) {
+    constructor(userService, eventService) {
         this.userService = userService;
         this.eventService = eventService;
-        this.eventsApiService = eventsApiService;
-        this.typeEvents = _shared_models_event_list__WEBPACK_IMPORTED_MODULE_2__["Events"];
-        this.dates = _shared_models_date_list__WEBPACK_IMPORTED_MODULE_3__["Dates"];
+        this.typeEvents = _shared_models_event_list__WEBPACK_IMPORTED_MODULE_1__["Events"];
+        this.dates = _shared_models_date_list__WEBPACK_IMPORTED_MODULE_2__["Dates"];
         this.events = new Array();
         this.eventsOnMap = new Array();
         this.eventsFromHQ = new Array();
-        this.filtersType = new _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormControl"]();
-        this.filtersDate = new _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormControl"]();
+        this.filtersType = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"]();
+        this.filtersDate = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"]();
         this.currentDate = new Date();
     }
     ngOnInit() {
-        this.eventService.events.subscribe((events) => {
+        this.eventSubscription = this.eventService.events.subscribe((events) => {
             this.events = events;
         });
-        this.subscription = this.userService.currentUser.subscribe((user) => {
+        this.userSubscription = this.userService.currentUser.subscribe((user) => {
             if (user) {
-                this.user = new _shared_models_user_model__WEBPACK_IMPORTED_MODULE_5__["User"](user._id, user.email, user.name, user.profile_type, user.amis);
+                this.user = new _shared_models_user_model__WEBPACK_IMPORTED_MODULE_4__["User"](user._id, user.email, user.name, user.profile_type, user.amis);
             }
         });
-        //this.eventsApiService.signRequestForMusicStory();
-        //this.predictHQ();
-    }
-    predictHQ() {
-        for (let i = 0; i < 1000; i += 50) {
-            this.eventsApiService.getEventsFromPredictHQ(i).subscribe((res) => {
-                let names = new Array();
-                for (let e of this.events) {
-                    names.push(e.name);
-                }
-                this.eventsFromHQ = res.results;
-                for (let event of this.eventsFromHQ) {
-                    if (names.indexOf(event.title) === -1) {
-                        const ev = new _shared_models_event__WEBPACK_IMPORTED_MODULE_1__["Event"]();
-                        ev.scope = "public";
-                        ev.name = event.title;
-                        ev.dateDebut = event.start;
-                        ev.dateFin = event.end;
-                        if (ev.name.startsWith("LE LIDO")) {
-                            ev.type = 'cabaret';
-                            ev.createur = "Le Lido";
-                        }
-                        else if (ev.name.startsWith("THE WORLD OF BANKSY")) {
-                            ev.type = 'expos';
-                        }
-                        else if (event.labels.indexOf("comedy") !== -1) {
-                            ev.type = 'théâtre';
-                        }
-                        else {
-                            ev.type = event.category;
-                        }
-                        ev.description = event.description;
-                        if (event.entities[0]) {
-                            ev.lieu = event.entities[0].formatted_address;
-                        }
-                        ev.latitude = event.location[1];
-                        ev.longitude = event.location[0];
-                        console.log(ev);
-                        //this.eventService.createEvent(ev);
-                    }
-                }
-            });
-        }
     }
     displayEvent(event) {
         this.eventToDisplay = event;
     }
     ngOnDestroy() {
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+        if (this.eventSubscription) {
+            this.eventSubscription.unsubscribe();
+        }
+        if (this.userSubscription) {
+            this.userSubscription.unsubscribe();
         }
     }
 }
-MainComponent.ɵfac = function MainComponent_Factory(t) { return new (t || MainComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_6__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_7__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_8__["EventsApiService"])); };
+MainComponent.ɵfac = function MainComponent_Factory(t) { return new (t || MainComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_5__["UserService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_6__["EventService"])); };
 MainComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MainComponent, selectors: [["app-main"]], decls: 15, vars: 13, consts: [[1, "filtres"], ["appearance", "fill", 1, "filtre"], ["multiple", "", 3, "formControl"], [3, "value", 4, "ngFor", "ngForOf"], ["fxLayout", "row", "fxLayout.xs", "column", 1, "elements"], ["fxFlex", "100", 1, "element", 3, "events", "inputFiltersDate", "inputFiltersType", "outputEvent"], ["fxFlex", "100", 1, "element", 3, "inputFiltersType", "inputEventToZoom", "inputEvents", "inputFiltersDate", "outputEvent"], ["fxFlex", "100", 1, "element", 3, "details", "inputEvent"], [3, "value"]], template: function MainComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "mat-form-field", 1);
@@ -4803,7 +4817,7 @@ MainComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("inputFiltersType", ctx.filtersType.value)("inputEventToZoom", ctx.eventToDisplay)("inputEvents", ctx.events)("inputFiltersDate", ctx.filtersDate.value);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("details", false)("inputEvent", ctx.eventToDisplay);
-    } }, directives: [_angular_material_form_field__WEBPACK_IMPORTED_MODULE_9__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_9__["MatLabel"], _angular_material_select__WEBPACK_IMPORTED_MODULE_10__["MatSelect"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["FormControlDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_11__["NgForOf"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultLayoutDirective"], _event_list_event_list_component__WEBPACK_IMPORTED_MODULE_13__["EventListComponent"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_12__["DefaultFlexDirective"], _map_map_component__WEBPACK_IMPORTED_MODULE_14__["MapComponent"], _event_event_component__WEBPACK_IMPORTED_MODULE_15__["EventComponent"], _angular_material_core__WEBPACK_IMPORTED_MODULE_16__["MatOption"]], styles: [".filtres[_ngcontent-%COMP%] {\n  display: flex;\n  flex-flow: row nowrap;\n  justify-content: center;\n  cursor: pointer;\n}\n\n.filtre[_ngcontent-%COMP%] {\n  margin: 0px 2px;\n  padding: 0px;\n  text-align: center;\n  background: #c5ddf5;\n}\n\n  .mat-form-field-appearance-fill{\n  width: auto;\n  height: 40px;\n}\n\n  .mat-form-field-wrapper { \n  padding-bottom: 0px;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-flex{\n  padding: 0px;\n  background-color: #c5ddf5;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix{\n  padding: 0px;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-underline{\n  display: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQWE7RUFDYixxQkFBcUI7RUFDckIsdUJBQXVCO0VBQ3ZCLGVBQWU7QUFDakI7O0FBRUE7RUFDRSxlQUFlO0VBQ2YsWUFBWTtFQUNaLGtCQUFrQjtFQUNsQixtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsWUFBWTtBQUNkOztBQUVBO0VBQ0UsbUJBQW1CO0FBQ3JCOztBQUVBO0VBQ0UsWUFBWTtFQUNaLHlCQUF5QjtBQUMzQjs7QUFFQTtFQUNFLFlBQVk7QUFDZDs7QUFFQTtFQUNFLGFBQWE7QUFDZiIsImZpbGUiOiJtYWluLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZmlsdHJlcyB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZmxvdzogcm93IG5vd3JhcDtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIGN1cnNvcjogcG9pbnRlcjtcbn1cblxuLmZpbHRyZSB7XG4gIG1hcmdpbjogMHB4IDJweDtcbiAgcGFkZGluZzogMHB4O1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIGJhY2tncm91bmQ6ICNjNWRkZjU7XG59XG5cbjo6bmctZGVlcCAubWF0LWZvcm0tZmllbGQtYXBwZWFyYW5jZS1maWxse1xuICB3aWR0aDogYXV0bztcbiAgaGVpZ2h0OiA0MHB4O1xufVxuXG46Om5nLWRlZXAgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgeyBcbiAgcGFkZGluZy1ib3R0b206IDBweDtcbn1cblxuOjpuZy1kZWVwIC5tYXQtZm9ybS1maWVsZC1hcHBlYXJhbmNlLWZpbGwgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgLm1hdC1mb3JtLWZpZWxkLWZsZXh7XG4gIHBhZGRpbmc6IDBweDtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2M1ZGRmNTtcbn1cblxuOjpuZy1kZWVwIC5tYXQtZm9ybS1maWVsZC1hcHBlYXJhbmNlLWZpbGwgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgLm1hdC1mb3JtLWZpZWxkLWZsZXggLm1hdC1mb3JtLWZpZWxkLWluZml4e1xuICBwYWRkaW5nOiAwcHg7XG59XG5cbjo6bmctZGVlcCAubWF0LWZvcm0tZmllbGQtYXBwZWFyYW5jZS1maWxsIC5tYXQtZm9ybS1maWVsZC13cmFwcGVyIC5tYXQtZm9ybS1maWVsZC11bmRlcmxpbmV7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbiJdfQ== */"] });
+    } }, directives: [_angular_material_form_field__WEBPACK_IMPORTED_MODULE_7__["MatFormField"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_7__["MatLabel"], _angular_material_select__WEBPACK_IMPORTED_MODULE_8__["MatSelect"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControlDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_9__["NgForOf"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_10__["DefaultLayoutDirective"], _event_list_event_list_component__WEBPACK_IMPORTED_MODULE_11__["EventListComponent"], _angular_flex_layout_flex__WEBPACK_IMPORTED_MODULE_10__["DefaultFlexDirective"], _map_map_component__WEBPACK_IMPORTED_MODULE_12__["MapComponent"], _event_event_component__WEBPACK_IMPORTED_MODULE_13__["EventComponent"], _angular_material_core__WEBPACK_IMPORTED_MODULE_14__["MatOption"]], styles: [".filtres[_ngcontent-%COMP%] {\n  display: flex;\n  flex-flow: row nowrap;\n  justify-content: center;\n  cursor: pointer;\n}\n\n.filtre[_ngcontent-%COMP%] {\n  margin: 0px 2px;\n  padding: 0px;\n  text-align: center;\n  background: #c5ddf5;\n}\n\n  .mat-form-field-appearance-fill{\n  width: auto;\n  height: 40px;\n}\n\n  .mat-form-field-wrapper { \n  padding-bottom: 0px;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-flex{\n  padding: 0px;\n  background-color: #c5ddf5;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix{\n  padding: 0px;\n}\n\n  .mat-form-field-appearance-fill .mat-form-field-wrapper .mat-form-field-underline{\n  display: none;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIm1haW4uY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQWE7RUFDYixxQkFBcUI7RUFDckIsdUJBQXVCO0VBQ3ZCLGVBQWU7QUFDakI7O0FBRUE7RUFDRSxlQUFlO0VBQ2YsWUFBWTtFQUNaLGtCQUFrQjtFQUNsQixtQkFBbUI7QUFDckI7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsWUFBWTtBQUNkOztBQUVBO0VBQ0UsbUJBQW1CO0FBQ3JCOztBQUVBO0VBQ0UsWUFBWTtFQUNaLHlCQUF5QjtBQUMzQjs7QUFFQTtFQUNFLFlBQVk7QUFDZDs7QUFFQTtFQUNFLGFBQWE7QUFDZiIsImZpbGUiOiJtYWluLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIuZmlsdHJlcyB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIGZsZXgtZmxvdzogcm93IG5vd3JhcDtcbiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIGN1cnNvcjogcG9pbnRlcjtcbn1cblxuLmZpbHRyZSB7XG4gIG1hcmdpbjogMHB4IDJweDtcbiAgcGFkZGluZzogMHB4O1xuICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIGJhY2tncm91bmQ6ICNjNWRkZjU7XG59XG5cbjo6bmctZGVlcCAubWF0LWZvcm0tZmllbGQtYXBwZWFyYW5jZS1maWxse1xuICB3aWR0aDogYXV0bztcbiAgaGVpZ2h0OiA0MHB4O1xufVxuXG46Om5nLWRlZXAgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgeyBcbiAgcGFkZGluZy1ib3R0b206IDBweDtcbn1cblxuOjpuZy1kZWVwIC5tYXQtZm9ybS1maWVsZC1hcHBlYXJhbmNlLWZpbGwgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgLm1hdC1mb3JtLWZpZWxkLWZsZXh7XG4gIHBhZGRpbmc6IDBweDtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2M1ZGRmNTtcbn1cblxuOjpuZy1kZWVwIC5tYXQtZm9ybS1maWVsZC1hcHBlYXJhbmNlLWZpbGwgLm1hdC1mb3JtLWZpZWxkLXdyYXBwZXIgLm1hdC1mb3JtLWZpZWxkLWZsZXggLm1hdC1mb3JtLWZpZWxkLWluZml4e1xuICBwYWRkaW5nOiAwcHg7XG59XG5cbjo6bmctZGVlcCAubWF0LWZvcm0tZmllbGQtYXBwZWFyYW5jZS1maWxsIC5tYXQtZm9ybS1maWVsZC13cmFwcGVyIC5tYXQtZm9ybS1maWVsZC11bmRlcmxpbmV7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbiJdfQ== */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](MainComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
@@ -4811,7 +4825,7 @@ MainComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComp
                 templateUrl: './main.component.html',
                 styleUrls: ['./main.component.css']
             }]
-    }], function () { return [{ type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_6__["UserService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_7__["EventService"] }, { type: _shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_8__["EventsApiService"] }]; }, null); })();
+    }], function () { return [{ type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_5__["UserService"] }, { type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_6__["EventService"] }]; }, null); })();
 
 
 /***/ }),

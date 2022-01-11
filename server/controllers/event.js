@@ -25,7 +25,38 @@ allPublicEvents = function (events) {
 
 exports.getAll = async (req, res, next) => {
   const token = req.headers.authorization;
-  const allEvents = await getEvents();
+  const allEvents = await getAllEvents();
+  if (token) {
+    jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
+      if (err) {
+        res.status(200).json(allPublicEvents(allEvents));
+      } else {
+        const sub = decoded.sub;
+        User.findOne({ '_id': sub }).exec((err, user) => {
+          if (err || !user) { res.status(401).json('error') }
+          else {
+            let currentUser = user;
+            let events = allEvents;
+            for (let e of allEvents) {
+              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) === -1) {
+                events.splice(events.indexOf(e), 1);
+              }
+            }
+            res.status(200).json(events);
+          }
+        });
+      }
+    })
+  } else {
+    const events = allPublicEvents(allEvents);
+    res.status(200).json(events);
+  }
+}
+
+exports.get = async (req, res, next) => {
+  const token = req.headers.authorization;
+  const allEvents = await getEvents(
+    req.body.latMin, req.body.latMax, req.body.longMin, req.body.longMax);
   if (token) {
     jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
       if (err) {
