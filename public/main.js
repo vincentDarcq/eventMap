@@ -947,11 +947,8 @@ OtherProfileComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵde
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EventListComponent", function() { return EventListComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! leaflet */ "4R65");
-/* harmony import */ var leaflet__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(leaflet__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ "ofXK");
-
+/* harmony import */ var _shared_services_event_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/services/event.service */ "6BoG");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "ofXK");
 
 
 
@@ -988,7 +985,7 @@ function EventListComponent_div_1_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx_r0.eventsOnMapFiltered);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx_r0.eventsFiltered);
 } }
 function EventListComponent_ng_template_2_div_0_Template(rf, ctx) { if (rf & 1) {
     const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
@@ -1019,34 +1016,19 @@ function EventListComponent_ng_template_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, EventListComponent_ng_template_2_div_0_Template, 8, 3, "div", 3);
 } if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx_r2.eventsOnMap);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx_r2.events);
 } }
 class EventListComponent {
     constructor(eventService) {
         this.eventService = eventService;
         this.outputEvent = new _angular_core__WEBPACK_IMPORTED_MODULE_0__["EventEmitter"]();
-        this.newBounds = false;
         this.filter = false;
-        this.eventsOnMap = new Array();
-        this.eventsOnMapFiltered = new Array();
+        this.eventsFiltered = new Array();
     }
     ngOnInit() {
         this.eventService.getBounds().subscribe((b) => {
-            this.bounds = b;
-            this.newBounds = true;
             this.upgradeFilteredTypeEvents();
         });
-    }
-    ngDoCheck() {
-        if (this.events.length > 0 && this.newBounds) {
-            this.eventsOnMap = new Array();
-            for (let event of this.events) {
-                if (this.bounds.contains(new leaflet__WEBPACK_IMPORTED_MODULE_1__["LatLng"](event.latitude, event.longitude))) {
-                    this.eventsOnMap.push(event);
-                }
-            }
-            this.newBounds = false;
-        }
     }
     ngOnChanges(changes) {
         const inputFiltersType = changes.inputFiltersType;
@@ -1056,73 +1038,73 @@ class EventListComponent {
             this.filter = true;
         }
         else if (typeof inputFiltersDate !== 'undefined' && inputFiltersDate.currentValue !== null && typeof inputFiltersDate.currentValue[0] !== 'undefined') {
-            this.eventsOnMapFiltered = new Array();
-            for (let event of this.eventsOnMap) {
+            this.eventsFiltered = new Array();
+            for (let event of this.events) {
                 if (this.inputFiltersDate.indexOf("1 jour") !== -1) {
                     if (event.timeLeft.days <= 1) {
-                        this.eventsOnMapFiltered.push(event);
+                        this.eventsFiltered.push(event);
                     }
                 }
                 if (this.inputFiltersDate.indexOf("2 jours") !== -1) {
                     if (event.timeLeft.days <= 2) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("3 jours") !== -1) {
                     if (event.timeLeft.days <= 3) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("4 jours") !== -1) {
                     if (event.timeLeft.days <= 4) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("5 jours") !== -1) {
                     if (event.timeLeft.days <= 5) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("6 jours") !== -1) {
                     if (event.timeLeft.days <= 6) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("1 semaine") !== -1) {
                     if (event.timeLeft.days <= 7) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("2 semaines") !== -1) {
                     if (event.timeLeft.days <= 14) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("3 semaines") !== -1) {
                     if (event.timeLeft.days <= 21) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
                 if (this.inputFiltersDate.indexOf("1 mois") !== -1) {
                     if (event.timeLeft.days <= 28) {
-                        if (this.eventsOnMapFiltered.indexOf(event) === -1) {
-                            this.eventsOnMapFiltered.push(event);
+                        if (this.eventsFiltered.indexOf(event) === -1) {
+                            this.eventsFiltered.push(event);
                         }
                     }
                 }
@@ -1130,26 +1112,26 @@ class EventListComponent {
             this.filter = true;
         }
         else {
-            this.eventsOnMapFiltered = new Array();
+            this.eventsFiltered = new Array();
             this.filter = false;
         }
     }
     upgradeFilteredTypeEvents() {
         if (this.inputFiltersType !== null) {
-            this.eventsOnMapFiltered = new Array();
-            for (let event of this.eventsOnMap) {
+            this.eventsFiltered = new Array();
+            for (let event of this.events) {
                 if (this.inputFiltersType.indexOf(event.type) !== -1) {
-                    this.eventsOnMapFiltered.push(event);
+                    this.eventsFiltered.push(event);
                 }
             }
         }
     }
     displayEvent(index) {
-        this.event = this.eventsOnMap[index];
+        this.event = this.events[index];
         this.outputEvent.emit(this.event);
     }
 }
-EventListComponent.ɵfac = function EventListComponent_Factory(t) { return new (t || EventListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_2__["EventService"])); };
+EventListComponent.ɵfac = function EventListComponent_Factory(t) { return new (t || EventListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_1__["EventService"])); };
 EventListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: EventListComponent, selectors: [["app-event-list"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", events: "events" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 4, vars: 2, consts: [[1, "list"], [4, "ngIf", "ngIfElse"], ["nofilters", ""], ["class", "card", 4, "ngFor", "ngForOf"], [1, "card"], ["id", "event", 1, "card-body", 3, "click"], ["id", "titre"]], template: function EventListComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, EventListComponent_div_1_Template, 2, 1, "div", 1);
@@ -1159,7 +1141,7 @@ EventListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
         const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵreference"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.filter)("ngIfElse", _r1);
-    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_3__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_3__["NgForOf"]], styles: [".list[_ngcontent-%COMP%] {\n  height: 80vh;\n  overflow-y: scroll;  \n}\n\n@media only screen and (max-width: 500px) {\n  \n  .list[_ngcontent-%COMP%] {\n    height: 26vh;\n    padding: 10px;\n    overflow:scroll;\n  }\n\n}\n\n[_ngcontent-%COMP%]::-webkit-scrollbar {\n  display: none;\n}\n\n#event[_ngcontent-%COMP%] {\n  float: none;\n  clear: none;\n  border-style: none;\n  border-width: 1px;\n  border-color: rgba(7, 0, 0, 0.98);\n  border-radius: 20px;\n  box-shadow: inset -2px -2px 5px 0 #000;\n  -webkit-backface-visibility: visible;\n  backface-visibility: visible;\n  perspective: 824px;\n  transform: perspective(216px);\n  font-weight: 400;\n  background-clip: padding-box;\n}\n\n.card-body[_ngcontent-%COMP%] {\n  padding:0;\n  height: 80px;\n  display: flex;\n  flex-flow: column nowrap;\n  background: #b0c9f3;\n  cursor: pointer;\n  text-align: center;\n}\n\n.card[_ngcontent-%COMP%] {\n  border: none;\n  background-color: #eee;\n}\n\np[_ngcontent-%COMP%] {\n  font-size: 0.8rem;\n  font-weight: 400;\n  padding: 0;\n  margin: 0;\n  text-align: center;\n}\n\n#titre[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  font-weight: 800;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LWxpc3QuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLFlBQVk7RUFDWixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSx1QkFBdUI7RUFDdkI7SUFDRSxZQUFZO0lBQ1osYUFBYTtJQUNiLGVBQWU7RUFDakI7O0FBRUY7O0FBRUE7RUFDRSxhQUFhO0FBQ2Y7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsV0FBVztFQUNYLGtCQUFrQjtFQUNsQixpQkFBaUI7RUFDakIsaUNBQWlDO0VBQ2pDLG1CQUFtQjtFQUNuQixzQ0FBc0M7RUFDdEMsb0NBQW9DO0VBQ3BDLDRCQUE0QjtFQUU1QixrQkFBa0I7RUFFbEIsNkJBQTZCO0VBQzdCLGdCQUFnQjtFQUNoQiw0QkFBNEI7QUFDOUI7O0FBRUE7RUFDRSxTQUFTO0VBQ1QsWUFBWTtFQUNaLGFBQWE7RUFDYix3QkFBd0I7RUFDeEIsbUJBQW1CO0VBQ25CLGVBQWU7RUFDZixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSxZQUFZO0VBQ1osc0JBQXNCO0FBQ3hCOztBQUVBO0VBQ0UsaUJBQWlCO0VBQ2pCLGdCQUFnQjtFQUNoQixVQUFVO0VBQ1YsU0FBUztFQUNULGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLGlCQUFpQjtFQUNqQixnQkFBZ0I7QUFDbEIiLCJmaWxlIjoiZXZlbnQtbGlzdC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmxpc3Qge1xuICBoZWlnaHQ6IDgwdmg7XG4gIG92ZXJmbG93LXk6IHNjcm9sbDsgIFxufVxuXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDUwMHB4KSB7XG4gIC8qIEZvciBtb2JpbGUgcGhvbmVzOiAqL1xuICAubGlzdCB7XG4gICAgaGVpZ2h0OiAyNnZoO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgb3ZlcmZsb3c6c2Nyb2xsO1xuICB9XG5cbn1cblxuOjotd2Via2l0LXNjcm9sbGJhciB7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbiNldmVudCB7XG4gIGZsb2F0OiBub25lO1xuICBjbGVhcjogbm9uZTtcbiAgYm9yZGVyLXN0eWxlOiBub25lO1xuICBib3JkZXItd2lkdGg6IDFweDtcbiAgYm9yZGVyLWNvbG9yOiByZ2JhKDcsIDAsIDAsIDAuOTgpO1xuICBib3JkZXItcmFkaXVzOiAyMHB4O1xuICBib3gtc2hhZG93OiBpbnNldCAtMnB4IC0ycHggNXB4IDAgIzAwMDtcbiAgLXdlYmtpdC1iYWNrZmFjZS12aXNpYmlsaXR5OiB2aXNpYmxlO1xuICBiYWNrZmFjZS12aXNpYmlsaXR5OiB2aXNpYmxlO1xuICAtd2Via2l0LXBlcnNwZWN0aXZlOiA4MjRweDtcbiAgcGVyc3BlY3RpdmU6IDgyNHB4O1xuICAtd2Via2l0LXRyYW5zZm9ybTogcGVyc3BlY3RpdmUoMjE2cHgpO1xuICB0cmFuc2Zvcm06IHBlcnNwZWN0aXZlKDIxNnB4KTtcbiAgZm9udC13ZWlnaHQ6IDQwMDtcbiAgYmFja2dyb3VuZC1jbGlwOiBwYWRkaW5nLWJveDtcbn1cblxuLmNhcmQtYm9keSB7XG4gIHBhZGRpbmc6MDtcbiAgaGVpZ2h0OiA4MHB4O1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWZsb3c6IGNvbHVtbiBub3dyYXA7XG4gIGJhY2tncm91bmQ6ICNiMGM5ZjM7XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG4uY2FyZCB7XG4gIGJvcmRlcjogbm9uZTtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2VlZTtcbn1cblxucCB7XG4gIGZvbnQtc2l6ZTogMC44cmVtO1xuICBmb250LXdlaWdodDogNDAwO1xuICBwYWRkaW5nOiAwO1xuICBtYXJnaW46IDA7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbn1cblxuI3RpdHJlIHtcbiAgZm9udC1zaXplOiAwLjdyZW07XG4gIGZvbnQtd2VpZ2h0OiA4MDA7XG59XG5cbiJdfQ== */"] });
+    } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_2__["NgForOf"]], styles: [".list[_ngcontent-%COMP%] {\n  height: 80vh;\n  overflow-y: scroll;  \n}\n\n@media only screen and (max-width: 500px) {\n  \n  .list[_ngcontent-%COMP%] {\n    height: 26vh;\n    padding: 10px;\n    overflow:scroll;\n  }\n\n}\n\n[_ngcontent-%COMP%]::-webkit-scrollbar {\n  display: none;\n}\n\n#event[_ngcontent-%COMP%] {\n  float: none;\n  clear: none;\n  border-style: none;\n  border-width: 1px;\n  border-color: rgba(7, 0, 0, 0.98);\n  border-radius: 20px;\n  box-shadow: inset -2px -2px 5px 0 #000;\n  -webkit-backface-visibility: visible;\n  backface-visibility: visible;\n  perspective: 824px;\n  transform: perspective(216px);\n  font-weight: 400;\n  background-clip: padding-box;\n}\n\n.card-body[_ngcontent-%COMP%] {\n  padding:0;\n  height: 80px;\n  display: flex;\n  flex-flow: column nowrap;\n  background: #b0c9f3;\n  cursor: pointer;\n  text-align: center;\n}\n\n.card[_ngcontent-%COMP%] {\n  border: none;\n  background-color: #eee;\n}\n\np[_ngcontent-%COMP%] {\n  font-size: 0.8rem;\n  font-weight: 400;\n  padding: 0;\n  margin: 0;\n  text-align: center;\n}\n\n#titre[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  font-weight: 800;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImV2ZW50LWxpc3QuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLFlBQVk7RUFDWixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSx1QkFBdUI7RUFDdkI7SUFDRSxZQUFZO0lBQ1osYUFBYTtJQUNiLGVBQWU7RUFDakI7O0FBRUY7O0FBRUE7RUFDRSxhQUFhO0FBQ2Y7O0FBRUE7RUFDRSxXQUFXO0VBQ1gsV0FBVztFQUNYLGtCQUFrQjtFQUNsQixpQkFBaUI7RUFDakIsaUNBQWlDO0VBQ2pDLG1CQUFtQjtFQUNuQixzQ0FBc0M7RUFDdEMsb0NBQW9DO0VBQ3BDLDRCQUE0QjtFQUU1QixrQkFBa0I7RUFFbEIsNkJBQTZCO0VBQzdCLGdCQUFnQjtFQUNoQiw0QkFBNEI7QUFDOUI7O0FBRUE7RUFDRSxTQUFTO0VBQ1QsWUFBWTtFQUNaLGFBQWE7RUFDYix3QkFBd0I7RUFDeEIsbUJBQW1CO0VBQ25CLGVBQWU7RUFDZixrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSxZQUFZO0VBQ1osc0JBQXNCO0FBQ3hCOztBQUVBO0VBQ0UsaUJBQWlCO0VBQ2pCLGdCQUFnQjtFQUNoQixVQUFVO0VBQ1YsU0FBUztFQUNULGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLGlCQUFpQjtFQUNqQixnQkFBZ0I7QUFDbEIiLCJmaWxlIjoiZXZlbnQtbGlzdC5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmxpc3Qge1xuICBoZWlnaHQ6IDgwdmg7XG4gIG92ZXJmbG93LXk6IHNjcm9sbDsgIFxufVxuXG5AbWVkaWEgb25seSBzY3JlZW4gYW5kIChtYXgtd2lkdGg6IDUwMHB4KSB7XG4gIC8qIEZvciBtb2JpbGUgcGhvbmVzOiAqL1xuICAubGlzdCB7XG4gICAgaGVpZ2h0OiAyNnZoO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgb3ZlcmZsb3c6c2Nyb2xsO1xuICB9XG5cbn1cblxuOjotd2Via2l0LXNjcm9sbGJhciB7XG4gIGRpc3BsYXk6IG5vbmU7XG59XG5cbiNldmVudCB7XG4gIGZsb2F0OiBub25lO1xuICBjbGVhcjogbm9uZTtcbiAgYm9yZGVyLXN0eWxlOiBub25lO1xuICBib3JkZXItd2lkdGg6IDFweDtcbiAgYm9yZGVyLWNvbG9yOiByZ2JhKDcsIDAsIDAsIDAuOTgpO1xuICBib3JkZXItcmFkaXVzOiAyMHB4O1xuICBib3gtc2hhZG93OiBpbnNldCAtMnB4IC0ycHggNXB4IDAgIzAwMDtcbiAgLXdlYmtpdC1iYWNrZmFjZS12aXNpYmlsaXR5OiB2aXNpYmxlO1xuICBiYWNrZmFjZS12aXNpYmlsaXR5OiB2aXNpYmxlO1xuICAtd2Via2l0LXBlcnNwZWN0aXZlOiA4MjRweDtcbiAgcGVyc3BlY3RpdmU6IDgyNHB4O1xuICAtd2Via2l0LXRyYW5zZm9ybTogcGVyc3BlY3RpdmUoMjE2cHgpO1xuICB0cmFuc2Zvcm06IHBlcnNwZWN0aXZlKDIxNnB4KTtcbiAgZm9udC13ZWlnaHQ6IDQwMDtcbiAgYmFja2dyb3VuZC1jbGlwOiBwYWRkaW5nLWJveDtcbn1cblxuLmNhcmQtYm9keSB7XG4gIHBhZGRpbmc6MDtcbiAgaGVpZ2h0OiA4MHB4O1xuICBkaXNwbGF5OiBmbGV4O1xuICBmbGV4LWZsb3c6IGNvbHVtbiBub3dyYXA7XG4gIGJhY2tncm91bmQ6ICNiMGM5ZjM7XG4gIGN1cnNvcjogcG9pbnRlcjtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG4uY2FyZCB7XG4gIGJvcmRlcjogbm9uZTtcbiAgYmFja2dyb3VuZC1jb2xvcjogI2VlZTtcbn1cblxucCB7XG4gIGZvbnQtc2l6ZTogMC44cmVtO1xuICBmb250LXdlaWdodDogNDAwO1xuICBwYWRkaW5nOiAwO1xuICBtYXJnaW46IDA7XG4gIHRleHQtYWxpZ246IGNlbnRlcjtcbn1cblxuI3RpdHJlIHtcbiAgZm9udC1zaXplOiAwLjdyZW07XG4gIGZvbnQtd2VpZ2h0OiA4MDA7XG59XG5cbiJdfQ== */"] });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](EventListComponent, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"],
         args: [{
@@ -1167,7 +1149,7 @@ EventListComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefin
                 templateUrl: './event-list.component.html',
                 styleUrls: ['./event-list.component.css']
             }]
-    }], function () { return [{ type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_2__["EventService"] }]; }, { inputFiltersType: [{
+    }], function () { return [{ type: _shared_services_event_service__WEBPACK_IMPORTED_MODULE_1__["EventService"] }]; }, { inputFiltersType: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
         }], inputFiltersDate: [{
             type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Input"]
