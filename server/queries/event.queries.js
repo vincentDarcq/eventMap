@@ -8,6 +8,10 @@ exports.getEvents = (latMin, latMax, longMin, longMax) => {
   return Event.find({ latitude: { $lte: latMax, $gte: latMin }, longitude: { $lte: longMax, $gte: longMin } }).exec();
 }
 
+exports.findEventsForNamesStartWith = (value) => {
+  return Event.find({ "name": { $regex: "^" + value } }).exec();
+}
+
 exports.getEvent = (eventId) => {
   return Event.findById(eventId).exec();
 }

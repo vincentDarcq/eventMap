@@ -6,26 +6,14 @@ const util = require('util');
 const Event = require('../models/event.model');
 const User = require('../models/user.model');
 const { newEvent, editEvent } = require('../models/event.model');
-const { getEvents, deleteOne, getEvent } = require('../queries/event.queries');
+const { getEvents, deleteOne, getEvent, findEventsForNamesStartWith } = require('../queries/event.queries');
 const {
   deleteMessage,
   createMessage,
   findMessagesPerEventId } = require('../queries/message.queries');
 
-
-allPublicEvents = function (events) {
-  let publicEvents = [];
-  for (let e of events) {
-    if (e.scope === "public") {
-      publicEvents.push(e);
-    }
-  }
-  return publicEvents;
-}
-
-exports.getAll = async (req, res, next) => {
-  const token = req.headers.authorization;
-  const allEvents = await getAllEvents();
+getAllEvents = function (token, allEvents) {
+  let events = [];
   if (token) {
     jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
       if (err) {
@@ -36,52 +24,41 @@ exports.getAll = async (req, res, next) => {
           if (err || !user) { res.status(401).json('error') }
           else {
             let currentUser = user;
-            let events = allEvents;
             for (let e of allEvents) {
               if (e.scope === "privé" && e.invites.indexOf(currentUser.name) === -1) {
                 events.splice(events.indexOf(e), 1);
               }
+              if (e.scope === "public") {
+                events.push(e);
+              }
             }
-            res.status(200).json(events);
           }
         });
       }
     })
   } else {
-    const events = allPublicEvents(allEvents);
-    res.status(200).json(events);
+    for (let e of allEvents) {
+      if (e.scope === "public") {
+        events.push(e);
+      }
+    }
   }
+  return events;
 }
 
 exports.get = async (req, res, next) => {
   const token = req.headers.authorization;
   const allEvents = await getEvents(
     req.body.latMin, req.body.latMax, req.body.longMin, req.body.longMax);
-  if (token) {
-    jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
-      if (err) {
-        res.status(200).json(allPublicEvents(allEvents));
-      } else {
-        const sub = decoded.sub;
-        User.findOne({ '_id': sub }).exec((err, user) => {
-          if (err || !user) { res.status(401).json('error') }
-          else {
-            let currentUser = user;
-            let events = allEvents;
-            for (let e of allEvents) {
-              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) === -1) {
-                events.splice(events.indexOf(e), 1);
-              }
-            }
-            res.status(200).json(events);
-          }
-        });
-      }
-    })
-  } else {
-    const events = allPublicEvents(allEvents);
-    res.status(200).json(events);
-  }
+  const events = getAllEvents(token, allEvents);
+  res.status(200).json(events);
+}
+
+exports.find = async (req, res, next) => {
+  const token = req.headers.authorization;
+  const allEvents = await findEventsForNamesStartWith(req.body.value);
+  const events = getAllEvents(token, allEvents);
+  res.status(200).json(events);
 }
 
 exports.create = async (req, res) => {
@@ -166,7 +143,6 @@ exports.createMessage = async (req, res, next) => {
 
 exports.getMessages = async (req, res, next) => {
   try {
-    console.log(req.query)
     const messages = await findMessagesPerEventId(req.query.eventId);
     res.status(200).json(messages);
   } catch (e) {
