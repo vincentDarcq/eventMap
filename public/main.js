@@ -54,10 +54,13 @@ class EventsApiService {
     //   })
     // }
     callOpenData() {
-        for (let i = 0; i < 1000; i += 20) {
+        let cpt = 0;
+        for (let i = 10004; i < 12004; i += 20) {
             this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.date_start=2022&timezone=Europe%2FParis`)
                 .subscribe(res => {
                 res.records.forEach(element => {
+                    cpt++;
+                    console.log(cpt);
                     const f = element.fields;
                     let event = new _models_event__WEBPACK_IMPORTED_MODULE_1__["Event"]();
                     event.setName(f.title);
@@ -366,6 +369,9 @@ class EventService {
             this.events.next(ev);
         });
     }
+    getEventsForNameStartWith(value) {
+        return this.http.post(`/api/event/find`, { value: value });
+    }
     createEvent(event, formData) {
         this.http.post('/api/event/create', event).subscribe((e) => {
             if (formData) {
@@ -597,9 +603,10 @@ class AuthService {
             token: null,
         });
         this.initToken();
-        this.subscription = this.initTimer();
+        //this.subscription = this.initTimer();
     }
     initTimer() {
+        console.log("init timer");
         return Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["timer"])(1000, 250000).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["switchMap"])(() => {
             if (localStorage.getItem('jwt')) {
                 return this.http.get('/api/auth/refresh-token').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["tap"])((token) => {
@@ -647,7 +654,7 @@ class AuthService {
                 token: token,
             });
             localStorage.setItem('jwt', token);
-            this.subscription = this.initTimer();
+            //this.subscription = this.initTimer();
         }));
     }
     editPassword(infos) {
@@ -2685,7 +2692,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function MapComponent_div_1_Template(rf, ctx) { if (rf & 1) {
     const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("leafletMapReady", function MapComponent_div_1_Template_div_leafletMapReady_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r2); const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](); return ctx_r1.onMapReady($event); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -2888,12 +2895,16 @@ class MapComponent {
     }
 }
 MapComponent.ɵfac = function MapComponent_Factory(t) { return new (t || MapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_map_service__WEBPACK_IMPORTED_MODULE_4__["MapService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_event_service__WEBPACK_IMPORTED_MODULE_5__["EventService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["NgZone"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_shared_services_events_api_service__WEBPACK_IMPORTED_MODULE_6__["EventsApiService"])); };
-MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", inputEventToZoom: "inputEventToZoom", inputEvents: "inputEvents" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 4, vars: 1, consts: [["fxLayout", "column", "fxLayoutAlign", "center center"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
+MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], inputs: { inputFiltersType: "inputFiltersType", inputFiltersDate: "inputFiltersDate", inputEventToZoom: "inputEventToZoom", inputEvents: "inputEvents" }, outputs: { outputEvent: "outputEvent" }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 6, vars: 1, consts: [["fxLayout", "column", "fxLayoutAlign", "center center"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady", 4, "ngIf"], ["mat-raised-button", "", "color", "primary", 3, "click"], ["mat-raised-button", "", 3, "click"], ["id", "map", "leaflet", "", 3, "leafletOptions", "leafletMapReady"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, MapComponent_div_1_Template, 1, 1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "button", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_2_listener() { return ctx.backToPosition(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3, "Revenir \u00E0 ma position");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "button", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function MapComponent_Template_button_click_4_listener() { return ctx.callOpenData(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5, "test API OpenData");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -3060,6 +3071,7 @@ class HeaderComponent {
         this.userService = userService;
         this.notConnected = false;
         this.connected = false;
+        this.eventsSearched = new Array();
         this.events = new Array();
     }
     ngOnInit() {
@@ -3072,19 +3084,19 @@ class HeaderComponent {
     }
     search() {
         this.results = new Array();
-        for (let event of this.events) {
-            const name = event.name.toUpperCase();
-            if (name.startsWith(this.eventSearch.toUpperCase())) {
+        this.eventService.getEventsForNameStartWith(this.eventSearch).subscribe((events) => {
+            events.forEach(event => {
                 this.results.push(event.name);
-            }
-        }
+                this.eventsSearched.push(event);
+            });
+        });
         if (this.eventSearch.length === 0) {
             this.results = new Array();
         }
     }
     selectEvent(index) {
         let e;
-        for (let event of this.events) {
+        for (let event of this.eventsSearched) {
             if (event.name === this.results[index]) {
                 e = event;
             }
