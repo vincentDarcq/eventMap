@@ -16,6 +16,10 @@ exports.getEvent = (eventId) => {
   return Event.findById(eventId).exec();
 }
 
+exports.getEventByUser = (userMail) => {
+  return Event.find({ emailCreateur: userMail }).exec();
+}
+
 exports.deleteOne = (eventId) => {
   return Event.findByIdAndDelete(eventId).exec();
 }

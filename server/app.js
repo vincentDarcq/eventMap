@@ -14,10 +14,10 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 app.use(cors({
-  'allowedHeaders': ['authorization', 'Content-Type'],
-  'origin': '*',
-  'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  'preflightContinue': false
+    'allowedHeaders': ['authorization', 'Content-Type'],
+    'origin': '*',
+    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'preflightContinue': false
 }));
 // imports pour les emails
 const nodemailer = require('nodemailer');

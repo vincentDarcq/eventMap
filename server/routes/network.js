@@ -5,7 +5,8 @@ const {
   deleteAskFriend,
   acceptFriend,
   deniedFriend,
-  deleteFriend } = require('../controllers/network_services')
+  deleteFriend,
+  findUsersForNamesStartWith } = require('../controllers/network_services')
 
 router.post('/askFriend', askFriend);
 router.get('/getAks', getAsks);
@@ -13,6 +14,6 @@ router.delete('/deleteAskFriend', deleteAskFriend);
 router.get('/acceptFriend', acceptFriend);
 router.get('/deniedFriend', deniedFriend);
 router.get('/deleteFriend', deleteFriend);
-
+router.get('/findUsers', findUsersForNamesStartWith)
 
 module.exports = router;

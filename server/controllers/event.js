@@ -6,13 +6,21 @@ const util = require('util');
 const Event = require('../models/event.model');
 const User = require('../models/user.model');
 const { newEvent, editEvent } = require('../models/event.model');
-const { getEvents, deleteOne, getEvent, findEventsForNamesStartWith } = require('../queries/event.queries');
+const {
+  getEvents,
+  deleteOne,
+  getEvent,
+  findEventsForNamesStartWith,
+  getEventByUser } = require('../queries/event.queries');
 const {
   deleteMessage,
   createMessage,
   findMessagesPerEventId } = require('../queries/message.queries');
 
-getAllEvents = function (token, allEvents) {
+exports.get = async (req, res, next) => {
+  const token = req.headers.authorization;
+  const allEvents = await getEvents(
+    req.body.latMin, req.body.latMax, req.body.longMin, req.body.longMax);
   let events = [];
   if (token) {
     jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
@@ -25,13 +33,14 @@ getAllEvents = function (token, allEvents) {
           else {
             let currentUser = user;
             for (let e of allEvents) {
-              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) === -1) {
-                events.splice(events.indexOf(e), 1);
+              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) !== -1) {
+                events.push(e);
               }
               if (e.scope === "public") {
                 events.push(e);
               }
             }
+            res.status(200).json(events);
           }
         });
       }
@@ -42,22 +51,49 @@ getAllEvents = function (token, allEvents) {
         events.push(e);
       }
     }
+    res.status(200).json(events);
   }
-  return events;
-}
-
-exports.get = async (req, res, next) => {
-  const token = req.headers.authorization;
-  const allEvents = await getEvents(
-    req.body.latMin, req.body.latMax, req.body.longMin, req.body.longMax);
-  const events = getAllEvents(token, allEvents);
-  res.status(200).json(events);
 }
 
 exports.find = async (req, res, next) => {
   const token = req.headers.authorization;
-  const allEvents = await findEventsForNamesStartWith(req.body.value);
-  const events = getAllEvents(token, allEvents);
+  const allEvents = await findEventsForNamesStartWith(req.query.value);
+  let events = [];
+  if (token) {
+    jwt.verify(token, RSA_PUBLIC_KEY, (err, decoded) => {
+      if (err) {
+        res.status(200).json(allPublicEvents(allEvents));
+      } else {
+        const sub = decoded.sub;
+        User.findOne({ '_id': sub }).exec((err, user) => {
+          if (err || !user) { res.status(401).json('error') }
+          else {
+            let currentUser = user;
+            for (let e of allEvents) {
+              if (e.scope === "privé" && e.invites.indexOf(currentUser.name) !== -1) {
+                events.push(e);
+              }
+              if (e.scope === "public") {
+                events.push(e);
+              }
+            }
+            return res.status(200).json(events);
+          }
+        });
+      }
+    })
+  } else {
+    for (let e of allEvents) {
+      if (e.scope === "public") {
+        events.push(e);
+      }
+    }
+    res.status(200).json(events);
+  }
+}
+
+exports.getEventsByUser = async (req, res) => {
+  const events = await getEventByUser(req.query.userMail);
   res.status(200).json(events);
 }
 

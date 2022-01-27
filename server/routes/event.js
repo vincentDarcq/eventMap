@@ -8,7 +8,8 @@ const {
   deleteOne,
   uploadImages,
   createMessage,
-  getMessages } = require('../controllers/event');
+  getMessages,
+  getEventsByUser } = require('../controllers/event');
 
 
 router.post('/create', create);
@@ -16,9 +17,10 @@ router.post('/uploadImages', storage.fields([{ name: 'image1' }, { name: 'image2
   uploadImages)
 router.put('/modify', modify);
 router.post('/get', get);
-router.post('/find', find);
+router.get('/find', find);
 router.delete('/deleteOne', deleteOne);
 router.get('/getMessages', getMessages);
+router.get('/getEventsByUser', getEventsByUser);
 router.post('/saveMessage', createMessage);
 
 module.exports = router;

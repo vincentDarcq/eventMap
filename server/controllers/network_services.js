@@ -1,7 +1,10 @@
 const { json } = require('express');
 const Ask = require('../models/askFriend.model');
+const ChatRoom = require('../models/chatRoom.model');
+const { newChatRoom } = require('../models/chatRoom.model');
+const { findRoom, deleteRoom } = require('../queries/chat.queries');
 const { createAsk, getAllAsks, deleteAsk } = require('../queries/network.queries');
-const { addFriend, deleteFriend } = require('../queries/user.queries');
+const { addFriend, deleteFriend, findUsersForNamesStartWith } = require('../queries/user.queries');
 
 
 exports.askFriend = async (req, res, next) => {
@@ -51,9 +54,12 @@ exports.acceptFriend = async (req, res, next) => {
         }
       });
     if (destinataireOk && demandeurOk) {
-      await deleteAsk(req).then((result) => {
-        res.status(200).send(result);
-      })
+      await deleteAsk(req);
+      const newRoom = newChatRoom(req.query.demandeur, req.query.destinataire);
+      await newRoom.save((err) => {
+        if (err) { res.status(500).json(err) }
+        res.status(200).send(req.query);
+      });
     }
   } catch (e) {
     next(e);
@@ -84,8 +90,24 @@ exports.deleteFriend = async (req, res, next) => {
       }
     });
     if (jsonResult.user && jsonResult.ami) {
+      const room1 = await findRoom(jsonResult.user + jsonResult.ami);
+      if (room1.length != 0) {
+        await deleteRoom(room1[0].roomName);
+      } else {
+        const room2 = await findRoom(jsonResult.ami + jsonResult.user);
+        await deleteRoom(room2[0].roomName);
+      }
       res.status(200).json(jsonResult);
     }
+  } catch (e) {
+    next(e);
+  }
+}
+
+exports.findUsersForNamesStartWith = async (req, res, next) => {
+  try {
+    const users = await findUsersForNamesStartWith(req.query.name);
+    res.send(users);
   } catch (e) {
     next(e);
   }
