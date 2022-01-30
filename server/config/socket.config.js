@@ -56,6 +56,7 @@ module.exports.initChat = (roomName, user) => {
           if (nsp.name === "/" + roomName) {
             nsp._eventsCount = 0;
             nsp._events = {};
+            nsp.user = "";
           }
         }
       });
