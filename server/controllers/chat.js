@@ -12,8 +12,8 @@ exports.deleteMessage = async (req, res, next) => {
 }
 
 exports.initChat = async (req, res, next) => {
-  initChat(req.query.roomName);
-  res.status(200).json({ test: "test" });
+  initChat(req.query.roomName, req.query.user);
+  res.status(200).json({});
 }
 
 exports.getRoomChat = async (req, res, next) => {
