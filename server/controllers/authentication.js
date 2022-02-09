@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.model');
 
+const { generateKey } = require('../config/openpgp');
+
 const RSA_PUBLIC_KEY = fs.readFileSync('./rsa/key.pub');
 const RSA_KEY_PRIVATE = fs.readFileSync('./rsa/key');
 
@@ -93,6 +95,9 @@ exports.signup = async (req, res) => {
   if (errUser !== "") {
     res.status(409).json(errUser)
   } else {
+    const keys = await generateKey(newUser.name, newUser.email);
+    newUser.pri = keys.privateKey;
+    newUser.pub = keys.publicKey;
     newUser.save((err) => {
       if (err) {
         res.status(500).json("erreur serveur au signup")

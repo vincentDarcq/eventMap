@@ -4,7 +4,7 @@ const ChatRoom = require('../models/chatRoom.model');
 const { newChatRoom } = require('../models/chatRoom.model');
 const { findRoom, deleteRoom } = require('../queries/chat.queries');
 const { createAsk, getAllAsks, deleteAsk } = require('../queries/network.queries');
-const { addFriend, deleteFriend, findUsersForNamesStartWith } = require('../queries/user.queries');
+const { addFriend, deleteFriend, findUsersForNamesStartWith, getUserByName } = require('../queries/user.queries');
 
 
 exports.askFriend = async (req, res, next) => {
