@@ -16,6 +16,9 @@ const {
   deleteMessage,
   createMessage,
   findMessagesPerEventId } = require('../queries/message.queries');
+const {
+  initChatEvent
+} = require('../config/socket.config');
 
 exports.get = async (req, res, next) => {
   const token = req.headers.authorization;
@@ -99,9 +102,10 @@ exports.getEventsByUser = async (req, res) => {
 
 exports.create = async (req, res) => {
   const event = newEvent(req);
-  event.save((err) => {
+  await event.save((err) => {
     if (err) { res.status(500).json(err) }
   });
+  initChatEvent(event._id);
   res.status(200).json(event);
 }
 
@@ -160,20 +164,6 @@ exports.deleteOne = async (req, res, next) => {
     res.status(200).json(eventDelete);
   } catch (e) {
     next(e);
-  }
-}
-
-exports.createMessage = async (req, res, next) => {
-  try {
-    const message = await createMessage({
-      message: req.body.message,
-      eventId: req.body.eventId,
-      userId: req.body.userId,
-      userName: req.body.userName,
-    });
-    res.status(200).json(message);
-  } catch (e) {
-    throw e;
   }
 }
 

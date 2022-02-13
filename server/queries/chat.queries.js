@@ -7,3 +7,7 @@ exports.deleteRoom = (roomName) => {
 exports.findRoom = (user1, user2) => {
   return ChatRoom.find({ roomName: user1 + user2 }).exec();
 }
+
+exports.findAllRooms = () => {
+  return ChatRoom.find({}).exec();
+}

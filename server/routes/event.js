@@ -21,6 +21,5 @@ router.get('/find', find);
 router.delete('/deleteOne', deleteOne);
 router.get('/getMessages', getMessages);
 router.get('/getEventsByUser', getEventsByUser);
-router.post('/saveMessage', createMessage);
 
 module.exports = router;

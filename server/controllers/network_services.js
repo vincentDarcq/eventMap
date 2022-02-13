@@ -5,7 +5,7 @@ const { newChatRoom } = require('../models/chatRoom.model');
 const { findRoom, deleteRoom } = require('../queries/chat.queries');
 const { createAsk, getAllAsks, deleteAsk } = require('../queries/network.queries');
 const { addFriend, deleteFriend, findUsersForNamesStartWith, getUserByName } = require('../queries/user.queries');
-
+const { initOneChat } = require('../config/socket.config');
 
 exports.askFriend = async (req, res, next) => {
   const newAsk = new Ask({
@@ -56,8 +56,9 @@ exports.acceptFriend = async (req, res, next) => {
     if (destinataireOk && demandeurOk) {
       await deleteAsk(req);
       const newRoom = newChatRoom(req.query.demandeur, req.query.destinataire);
-      await newRoom.save((err) => {
+      newRoom.save((err) => {
         if (err) { res.status(500).json(err) }
+        initOneChat(newRoom);
         res.status(200).send(req.query);
       });
     }

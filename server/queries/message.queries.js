@@ -4,11 +4,11 @@ exports.findMessagesPerEventId = (eventId) => {
   return Message.find({ eventId: eventId }).exec();
 };
 
-exports.createMessage = (message) => {
+exports.createMessageEvent = (message) => {
   const newMessage = new Message(message);
   return newMessage.save();
 };
 
 exports.deleteMessage = (messageId) => {
-  Message.findByIdAndDelete(messageId).exec();
+  return Message.findByIdAndDelete(messageId).exec();
 }
