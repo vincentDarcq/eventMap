@@ -16,10 +16,29 @@ exports.getEvent = (eventId) => {
   return Event.findById(eventId).exec();
 }
 
+exports.isEventExist = (event) => {
+  return Event.find(
+    {
+      "name": event.name,
+      "lieu": event.lieu,
+      "latitude": event.latitude,
+      "longitude": event.longitude,
+      "description": event.description,
+      "type": event.type,
+      "space_and_time": event.space_and_time,
+      "dateDebut": event.dateDebut,
+      "dateFin": event.dateFin
+    }).exec();
+}
+
 exports.getEventByUser = (userMail) => {
   return Event.find({ emailCreateur: userMail }).exec();
 }
 
 exports.deleteOne = (eventId) => {
   return Event.findByIdAndDelete(eventId).exec();
+}
+
+exports.findByIdAndUpdate = (id, event) => {
+  return Event.findByIdAndUpdate({ _id: id }, event)
 }

@@ -11,11 +11,14 @@ const {
   deleteOne,
   getEvent,
   findEventsForNamesStartWith,
-  getEventByUser } = require('../queries/event.queries');
+  getEventByUser,
+  isEventExist,
+  findByIdAndUpdate
+} = require('../queries/event.queries');
 const {
   deleteMessage,
-  createMessage,
-  findMessagesPerEventId } = require('../queries/message.queries');
+  findMessagesPerEventId
+} = require('../queries/message.queries');
 const {
   initChatEvent
 } = require('../config/socket.config');
@@ -102,11 +105,25 @@ exports.getEventsByUser = async (req, res) => {
 
 exports.create = async (req, res) => {
   const event = newEvent(req);
-  await event.save((err) => {
+  event.save((err) => {
     if (err) { res.status(500).json(err) }
+    initChatEvent(event._id);
+    res.status(200).json(event);
   });
-  initChatEvent(event._id);
-  res.status(200).json(event);
+}
+
+exports.createFromOpenData = async (req, res) => {
+  const event = newEvent(req);
+  const isExist = await isEventExist(event);
+  if (isExist.length > 0) {
+    res.status(200).json({});
+  } else {
+    event.save((err) => {
+      if (err) { res.status(500).json(err) }
+    });
+    initChatEvent(event._id);
+    res.status(200).json(event);
+  }
 }
 
 exports.uploadImages = async (req, res) => {
@@ -120,6 +137,8 @@ exports.uploadImages = async (req, res) => {
         if (err) throw err;
       });
     }
+  } else {
+    upload.image1 = event.image1;
   }
   if (req.files.image2) {
     upload.image2 = req.files.image2[0].filename;
@@ -128,6 +147,8 @@ exports.uploadImages = async (req, res) => {
         if (err) throw err;
       });
     }
+  } else {
+    upload.image2 = event.image2;
   }
   if (req.files.image3) {
     upload.image3 = req.files.image3[0].filename;
@@ -136,12 +157,11 @@ exports.uploadImages = async (req, res) => {
         if (err) throw err;
       });
     }
+  } else {
+    upload.image3 = event.image3;
   }
-  Event.findByIdAndUpdate({ _id: req.query.eventId }, upload,
-    (err) => {
-      if (err) { res.status(500).json(err) }
-      res.status(200).json(upload);
-    });
+  const updatedEvent = await findByIdAndUpdate(req.query.eventId, upload);
+  res.status(200).json(updatedEvent);
 }
 
 exports.modify = async (req, res) => {

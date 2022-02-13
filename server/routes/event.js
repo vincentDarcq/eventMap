@@ -7,12 +7,14 @@ const {
   modify,
   deleteOne,
   uploadImages,
-  createMessage,
+  createFromOpenData,
   getMessages,
-  getEventsByUser } = require('../controllers/event');
+  getEventsByUser
+} = require('../controllers/event');
 
 
 router.post('/create', create);
+router.post('/createFromOpenData', createFromOpenData);
 router.post('/uploadImages', storage.fields([{ name: 'image1' }, { name: 'image2' }, { name: 'image3' }]),
   uploadImages)
 router.put('/modify', modify);
