@@ -1,10 +1,4 @@
-const fs = require('fs');
 const User = require("../models/user.model");
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-
-const RSA_KEY_PRIVATE = fs.readFileSync('./rsa/key');
-const RSA_PUBLIC_KEY = fs.readFileSync('./rsa/key.pub');
 
 exports.getUsers = () => {
   return User.find({}).exec();
@@ -22,7 +16,11 @@ exports.getUserByName = (name) => {
   return User.findOne({ 'name': name });
 }
 
-exports.deleteUser = (userEmail) => {
+exports.findByIdAndUpdate = (id, user) => {
+  return User.findByIdAndUpdate({ _id: id }, user)
+}
+
+exports.deleteUserByMail = (userEmail) => {
   return User.findOneAndDelete({ email: userEmail }).exec();
 }
 

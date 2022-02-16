@@ -43,22 +43,10 @@ exports.isLoggedIn = async (req, res, next) => {
   }
 }
 
-exports.user = async (req, res, next) => {
-  try {
-    const users = await getUsers();
-    users.forEach((user) => {
-      if (req.query.user === user.name) {
-        res.status(200).json(user)
-      }
-    })
-  } catch (e) {
-    next(e);
-  }
-}
-
 exports.signin = async (req, res, next) => {
   try {
-    await getUserByMail(req.body.email).exec((err, user) => {
+    getUserByMail(req.body.email).exec((err, user) => {
+      if (err) { res.status(500).json(err) }
       if (user && bcrypt.compareSync(req.body.password, user.password)) {
         const token = jwt.sign({}, RSA_KEY_PRIVATE, {
           algorithm: 'RS256',
@@ -78,11 +66,12 @@ exports.signup = async (req, res) => {
   const newUser = new User({
     email: req.body.email,
     name: req.body.name,
+    picture: req.body.picture,
     password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8)),
     profile_type: req.body.profile_type
   })
 
-  let errUser = ""
+  let errUser = "";
   const users = await getUsers();
   users.forEach((user) => {
     if (user.name === newUser.name) {
@@ -99,27 +88,8 @@ exports.signup = async (req, res) => {
     newUser.pri = keys.privateKey;
     newUser.pub = keys.publicKey;
     newUser.save((err) => {
-      if (err) {
-        res.status(500).json("erreur serveur au signup")
-      }
-      res.status(200).json('signup ok')
+      if (err) { res.status(500).json("erreur serveur au signup") }
+      res.status(200).json(newUser)
     })
-  }
-}
-
-exports.editPass = async (req, res) => {
-  try {
-    await getUserByMail(req.body.email).exec((err, user) => {
-      if (user && bcrypt.compareSync(req.body.oldPass, user.password)) {
-        editUserPass(req.body.email, bcrypt.hashSync(req.body.newPass, bcrypt.genSaltSync(8))).exec((err, user) => {
-          if (err) { res.status(401).json('Problème au changement du mdp'); }
-          res.status(200).json(user);
-        })
-      } else {
-        res.status(401).json('Ancien mot de passe invalide');
-      }
-    });
-  } catch (e) {
-    next(e);
   }
 }
