@@ -10,5 +10,5 @@ exports.createMessage = (message, user, friend, roomName, pri, pub) => {
 };
 
 exports.deleteMessage = (messageId) => {
-  chatMessage.findByIdAndDelete(messageId).exec();
+  return chatMessage.findByIdAndDelete(messageId).exec();
 }

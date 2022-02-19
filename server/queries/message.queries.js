@@ -9,6 +9,6 @@ exports.createMessageEvent = (message) => {
   return newMessage.save();
 };
 
-exports.deleteMessage = (messageId) => {
+exports.deleteMessageEvent = (messageId) => {
   return Message.findByIdAndDelete(messageId).exec();
 }

@@ -35,6 +35,7 @@ exports.isLoggedIn = async (req, res, next) => {
       User.findOne({ '_id': sub }).exec((err, user) => {
         if (err || !user) { res.status(401).json('error') }
         user.password = null;
+        console.log(user)
         res.status(200).json(user);
       })
     })

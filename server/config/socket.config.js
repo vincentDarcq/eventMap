@@ -1,13 +1,14 @@
 const { Server } = require("socket.io");
 const {
   findMessages,
-  createMessage
+  createMessage,
+  deleteMessage
 } = require('../queries/chatMessage.queries');
 const { getAllEvents } = require('../queries/event.queries');
 const {
   findMessagesPerEventId,
   createMessageEvent,
-  deleteMessage
+  deleteMessageEvent
 } = require('../queries/message.queries');
 const { getAllChatRooms } = require('../controllers/chat');
 
@@ -23,15 +24,19 @@ initNamespaceChat = (room) => {
       }
       nsSocket.on("message", async ({ message, user, friend, roomName }) => {
         try {
-          await createMessage(message, user, friend, roomName);
-          r.emit("message", { message: message, user: user, friend: friend });
+          const msg = await createMessage(message, user, friend, roomName);
+          r.emit("message", msg);
         } catch (e) {
           throw e;
         }
       });
+      nsSocket.on("deleteOne", async ({ id }) => {
+        const msg = await deleteMessage(id);
+        r.emit("deletedOne", msg);
+      });
       nsSocket.on("close", (user) => {
         nsSocket.removeAllListeners();
-      })
+      });
     });
   } catch (e) {
     throw e;
@@ -70,7 +75,7 @@ initNamespaceEvent = async (eventId) => {
       });
       nsSocket.on("deleteMessage", async ({ id }) => {
         try {
-          const deletedMessage = await deleteMessage(id);
+          const deletedMessage = await deleteMessageEvent(id);
           e.emit("deleteMessage", deletedMessage);
         } catch (e) {
           throw e;
