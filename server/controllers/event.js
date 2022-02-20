@@ -20,7 +20,8 @@ const {
   findMessagesPerEventId
 } = require('../queries/message.queries');
 const {
-  initChatEvent
+  initChatEvent,
+  closeNamespaceEvent
 } = require('../config/socket.config');
 
 exports.get = async (req, res, next) => {
@@ -180,6 +181,7 @@ exports.deleteOne = async (req, res, next) => {
     }
     const event = await getEvent(req.query.eventId);
     removeEventImages(event);
+    closeNamespaceEvent(event._id);
     const eventDelete = await deleteOne(req.query.eventId);
     res.status(200).json(eventDelete);
   } catch (e) {

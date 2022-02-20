@@ -1,11 +1,10 @@
 const { json } = require('express');
 const Ask = require('../models/askFriend.model');
-const ChatRoom = require('../models/chatRoom.model');
 const { newChatRoom } = require('../models/chatRoom.model');
 const { findRoom, deleteRoom } = require('../queries/chat.queries');
 const { createAsk, getAllAsks, deleteAsk } = require('../queries/network.queries');
-const { addFriend, deleteFriend, findUsersForNamesStartWith, getUserByName } = require('../queries/user.queries');
-const { initOneChat } = require('../config/socket.config');
+const { addFriend, deleteFriend, findUsersForNamesStartWith } = require('../queries/user.queries');
+const { initOneChat, closeNamespaceChat } = require('../config/socket.config');
 
 exports.askFriend = async (req, res, next) => {
   const newAsk = new Ask({
@@ -13,7 +12,7 @@ exports.askFriend = async (req, res, next) => {
     destinataire: req.body.destinataire
   });
   try {
-    await createAsk(res, newAsk);
+    createAsk(res, newAsk);
   } catch (e) {
     next(e);
   }
@@ -91,12 +90,14 @@ exports.deleteFriend = async (req, res, next) => {
       }
     });
     if (jsonResult.user && jsonResult.ami) {
-      const room1 = await findRoom(jsonResult.user + jsonResult.ami);
-      if (room1.length != 0) {
-        await deleteRoom(room1[0].roomName);
+      let room = await findRoom(jsonResult.user + jsonResult.ami);
+      if (room.length != 0) {
+        closeNamespaceChat(room);
+        await deleteRoom(room[0].roomName);
       } else {
-        const room2 = await findRoom(jsonResult.ami + jsonResult.user);
-        await deleteRoom(room2[0].roomName);
+        room = await findRoom(jsonResult.ami + jsonResult.user);
+        closeNamespaceChat(room);
+        await deleteRoom(room[0].roomName);
       }
       res.status(200).json(jsonResult);
     }

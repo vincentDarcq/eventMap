@@ -98,6 +98,14 @@ module.exports.initChatEvent = (eventId) => {
   }
 }
 
+module.exports.closeNamespaceChat = (room) => {
+  globalThis.ios.of(`/${room.roomName}`).removeAllListeners();
+}
+
+module.exports.closeNamespaceEvent = (eventId) => {
+  globalThis.ios.of(`/${eventId}`).removeAllListeners();
+}
+
 initAllChatEvents = async () => {
   try {
     events = await getAllEvents();
