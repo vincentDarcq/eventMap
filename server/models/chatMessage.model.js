@@ -7,9 +7,7 @@ const chatMessageSchema = schema(
     message: String,
     user: String,
     friend: String,
-    roomName: String,
-    pri: String,
-    pub: String
+    roomName: String
   },
   { timestamps: true }
 );

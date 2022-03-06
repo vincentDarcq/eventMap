@@ -4,8 +4,12 @@ exports.findMessages = (roomName) => {
   return chatMessage.find({ roomName: roomName }).exec();
 };
 
-exports.createMessage = (message, user, friend, roomName, pri, pub) => {
-  const newMessage = new chatMessage({ message, user, friend, roomName, pri, pub });
+exports.findLastMessage = (roomName, date) => {
+  return chatMessage.find({ roomName: roomName, createdAt: { $gt: date } }).exec();
+};
+
+exports.createMessage = (message, user, friend, roomName) => {
+  const newMessage = new chatMessage({ message, user, friend, roomName });
   return newMessage.save();
 };
 
