@@ -29,7 +29,7 @@
     "ws": "^7.4.4"
   },
   "main": "app.js",
-  "author": "",
+  "author": "Vincent Darcq",
   "license": "ISC",
   "description": ""
 }

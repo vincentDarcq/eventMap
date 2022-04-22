@@ -19,13 +19,6 @@ app.use(cors({
     'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
     'preflightContinue': false
 }));
-// imports pour les emails
-const nodemailer = require('nodemailer');
-const sparkPostTransport = require('nodemailer-sparkpost-transport');
-const transporter = nodemailer.createTransport(sparkPostTransport({
-    sparkPostApiKey: 'b58e0c8cdc97844c06e6e7e7f57eb4fe5df73067',
-    endpoint: 'https://api.eu.sparkpost.com'
-}));
 
 app.use(logger('dev'));
 //parser les objets qu'on envoie via les requêtes POST
