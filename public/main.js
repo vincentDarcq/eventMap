@@ -55,7 +55,7 @@ class EventsApiService {
     // }
     callOpenData() {
         let cpt = 0;
-        for (let i = 0; i < 15000; i += 20) {
+        for (let i = 0; i < 10000; i += 20) {
             this.http.get(`https://public.opendatasoft.com/api/records/1.0/search/?dataset=evenements-publics-cibul&q=&rows=20&start=${i}&facet=tags&facet=placename&facet=department&facet=region&facet=city&facet=date_start&facet=date_end&facet=pricing_info&facet=updated_at&facet=city_district&refine.date_start=2022&timezone=Europe%2FParis`)
                 .subscribe(res => {
                 res.records.forEach(element => {
@@ -3584,16 +3584,29 @@ class MapComponent {
     }
     createMarker(e) {
         const point = this.mapService.createPoint(this.mapPoint);
-        let time = e.timeLeft.days + "j " + e.timeLeft.hours + "h " + e.timeLeft.minutes + "min";
-        const layer = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["marker"])(point).setIcon(this.getRedIcon())
-            .addTo(this.map)
-            .on('click', () => {
-            this.zone.run(() => {
-                this.outputEvent.emit(e);
-                this.getZoomOnEvent(point);
+        let layer;
+        if (typeof e.timeLeft !== 'undefined') {
+            let time = e.timeLeft.days + "j " + e.timeLeft.hours + "h " + e.timeLeft.minutes + "min";
+            layer = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["marker"])(point).setIcon(this.getRedIcon())
+                .addTo(this.map)
+                .on('click', () => {
+                this.zone.run(() => {
+                    this.outputEvent.emit(e);
+                    this.getZoomOnEvent(point);
+                });
+            })
+                .bindTooltip(time);
+        }
+        else {
+            layer = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["marker"])(point).setIcon(this.getRedIcon())
+                .addTo(this.map)
+                .on('click', () => {
+                this.zone.run(() => {
+                    this.outputEvent.emit(e);
+                    this.getZoomOnEvent(point);
+                });
             });
-        })
-            .bindTooltip(time);
+        }
         this.layers.push(layer);
     }
     getZoomOnEvent(point) {
