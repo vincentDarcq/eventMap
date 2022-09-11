@@ -5507,10 +5507,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MetaAndTitleService", function() { return MetaAndTitleService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "tyNb");
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "qCKp");
-/* harmony import */ var _helpers_meta_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../helpers/meta-data */ "W52M");
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ "jhN1");
-
+/* harmony import */ var _helpers_meta_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../helpers/meta-data */ "W52M");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/platform-browser */ "jhN1");
 
 
 
@@ -5522,46 +5520,50 @@ class MetaAndTitleService {
         this.router = router;
         this.title = title;
         this.meta = meta;
-        this.subscription = new rxjs__WEBPACK_IMPORTED_MODULE_2__["Subscription"];
-        this.subscription.add(this.router.events.subscribe((event) => {
+        this.subscription = this.router.events.subscribe((event) => {
             if (event instanceof _angular_router__WEBPACK_IMPORTED_MODULE_1__["NavigationEnd"]) {
                 const url = event.url;
                 this.updateTitle(url);
                 this.updateMeta(url);
             }
-        }));
+        });
     }
-    updateTitle(url) {
-        const index = url.indexOf(";");
-        if (index !== -1) {
-            this.title.setTitle(_helpers_meta_data__WEBPACK_IMPORTED_MODULE_3__["default"][url.substring(0, index)].title);
+    getPrefixFromUrl(url) {
+        const u = url.split("/");
+        if (u.length === 3) {
+            return url.substring(0, url.lastIndexOf("/"));
         }
         else {
-            this.title.setTitle(_helpers_meta_data__WEBPACK_IMPORTED_MODULE_3__["default"][url].title);
+            return url;
         }
+    }
+    updateTitle(url) {
+        this.title.setTitle(_helpers_meta_data__WEBPACK_IMPORTED_MODULE_2__["default"][this.getPrefixFromUrl(url)].title);
     }
     updateMeta(url) {
         const oldTagDescription = this.meta.getTag('name="description"');
         const newTagDescription = {
             name: 'description',
-            content: _helpers_meta_data__WEBPACK_IMPORTED_MODULE_3__["default"][url].metas.description
+            content: _helpers_meta_data__WEBPACK_IMPORTED_MODULE_2__["default"][this.getPrefixFromUrl(url)].metas.description
         };
         oldTagDescription
             ? this.meta.updateTag(newTagDescription)
             : this.meta.addTag(newTagDescription);
     }
     ngOnDestroy() {
-        this.subscription.unsubscribe();
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 }
-MetaAndTitleService.ɵfac = function MetaAndTitleService_Factory(t) { return new (t || MetaAndTitleService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Title"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Meta"])); };
+MetaAndTitleService.ɵfac = function MetaAndTitleService_Factory(t) { return new (t || MetaAndTitleService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["Title"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["Meta"])); };
 MetaAndTitleService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: MetaAndTitleService, factory: MetaAndTitleService.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](MetaAndTitleService, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'root'
             }]
-    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"] }, { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Title"] }, { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__["Meta"] }]; }, null); })();
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"] }, { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["Title"] }, { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_3__["Meta"] }]; }, null); })();
 
 
 /***/ }),
