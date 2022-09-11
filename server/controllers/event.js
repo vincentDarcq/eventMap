@@ -104,6 +104,11 @@ exports.getEventsByUser = async (req, res) => {
   res.status(200).json(events);
 }
 
+exports.getEventsById = async (req, res) => {
+  const event = await getEvent(req.query.id);
+  res.status(200).json(event);
+}
+
 exports.create = async (req, res) => {
   const event = newEvent(req);
   event.save((err) => {

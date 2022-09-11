@@ -9,7 +9,8 @@ const {
   uploadImages,
   createFromOpenData,
   getMessages,
-  getEventsByUser
+  getEventsByUser,
+  getEventsById
 } = require('../controllers/event');
 
 
@@ -23,5 +24,6 @@ router.get('/find', find);
 router.delete('/deleteOne', deleteOne);
 router.get('/getMessages', getMessages);
 router.get('/getEventsByUser', getEventsByUser);
+router.get('/getEventsById', getEventsById);
 
 module.exports = router;
