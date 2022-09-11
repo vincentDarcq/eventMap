@@ -885,8 +885,7 @@ function OtherProfileComponent_div_7_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } }
-const _c0 = function (a0) { return { _id: a0 }; };
-const _c1 = function (a1) { return ["/eventDetail", a1]; };
+const _c0 = function (a1) { return ["/eventDetail", a1]; };
 function OtherProfileComponent_mat_card_content_9_Template(rf, ctx) { if (rf & 1) {
     const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card-content");
@@ -910,7 +909,7 @@ function OtherProfileComponent_mat_card_content_9_Template(rf, ctx) { if (rf & 1
 } if (rf & 2) {
     const event_r13 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](6, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c0, event_r13._id)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c0, event_r13._id));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](event_r13.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
@@ -1022,7 +1021,7 @@ OtherProfileComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵde
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](7, OtherProfileComponent_div_7_Template, 5, 0, "div", 4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-card", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, OtherProfileComponent_mat_card_content_9_Template, 11, 8, "mat-card-content", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, OtherProfileComponent_mat_card_content_9_Template, 11, 6, "mat-card-content", 6);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     } if (rf & 2) {
@@ -1354,8 +1353,8 @@ class EventDetailComponent {
         this.serverImg = "/upload?img=";
     }
     ngOnInit() {
-        this.activatedRoute.paramMap.subscribe((params) => {
-            this.idEvent = params.get('_id');
+        this.activatedRoute.params.subscribe((params) => {
+            this.idEvent = params['id'];
         });
         this.eventService.events.subscribe((events) => {
             const id = events.findIndex((event) => this.idEvent === event._id);
@@ -2395,8 +2394,7 @@ function ProfileComponent_div_3_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r1.user.name);
 } }
-const _c0 = function (a0) { return { _id: a0 }; };
-const _c1 = function (a1) { return ["/eventDetail", a1]; };
+const _c0 = function (a1) { return ["/eventDetail", a1]; };
 function ProfileComponent_mat_card_content_8_Template(rf, ctx) { if (rf & 1) {
     const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card-content", 15);
@@ -2421,9 +2419,9 @@ function ProfileComponent_mat_card_content_8_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const event_r5 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](7, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](5, _c0, event_r5._id)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](5, _c0, event_r5._id));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](11, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](9, _c0, event_r5._id)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](7, _c0, event_r5._id));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](event_r5.name);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
@@ -2431,8 +2429,8 @@ function ProfileComponent_mat_card_content_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](event_r5.dateDebutString);
 } }
-const _c2 = function (a0) { return { user: a0 }; };
-const _c3 = function (a1) { return ["/otherProfile", a1]; };
+const _c1 = function (a0) { return { user: a0 }; };
+const _c2 = function (a1) { return ["/otherProfile", a1]; };
 function ProfileComponent_mat_card_content_13_Template(rf, ctx) { if (rf & 1) {
     const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card-content", 20);
@@ -2447,7 +2445,7 @@ function ProfileComponent_mat_card_content_13_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const ami_r8 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c2, ami_r8)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c1, ami_r8)));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ami_r8);
 } }
@@ -2469,12 +2467,12 @@ function ProfileComponent_mat_card_content_17_Template(rf, ctx) { if (rf & 1) {
 } if (rf & 2) {
     const ask_r12 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c2, ask_r12.demandeur)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c1, ask_r12.demandeur)));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ask_r12.demandeur);
 } }
-const _c4 = function (a0) { return { email: a0 }; };
-const _c5 = function (a1) { return ["/editPass", a1]; };
+const _c3 = function (a0) { return { email: a0 }; };
+const _c4 = function (a1) { return ["/editPass", a1]; };
 class ProfileComponent {
     constructor(userService, eventService, networkService) {
         this.userService = userService;
@@ -2569,7 +2567,7 @@ ProfileComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "div", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](8, ProfileComponent_mat_card_content_8_Template, 12, 13, "mat-card-content", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](8, ProfileComponent_mat_card_content_8_Template, 12, 9, "mat-card-content", 7);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "div", 8);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-card", 9);
@@ -2592,7 +2590,7 @@ ProfileComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineC
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.user);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](8, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](6, _c4, ctx.user.email)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](8, _c4, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](6, _c3, ctx.user.email)));
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.events);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](5);
@@ -3883,7 +3881,7 @@ class HeaderComponent {
         }
         const url = this.router.url;
         if (url.length !== 1) {
-            this.router.navigate(['/eventDetail', { _id: e._id }]);
+            this.router.navigate(['/eventDetail', e._id]);
         }
         else {
             this.eventService.setEventFromTopBar(e);
@@ -4539,7 +4537,7 @@ class EventFormComponent {
         this.newEvent = new _shared_models_event__WEBPACK_IMPORTED_MODULE_4__["Event"]();
     }
     ngOnInit() {
-        this.activatedRoute.paramMap.subscribe((params) => {
+        this.subActivatedRoute = this.activatedRoute.paramMap.subscribe((params) => {
             this.id = params.get('_id');
         });
         this.subscription = this.userService.currentUser.subscribe((user) => {
@@ -4714,6 +4712,9 @@ class EventFormComponent {
     ngOnDestroy() {
         if (this.subscription) {
             this.subscription.unsubscribe();
+        }
+        if (this.subActivatedRoute) {
+            this.subActivatedRoute.unsubscribe();
         }
     }
 }
@@ -5201,8 +5202,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const _c0 = function (a0) { return { _id: a0 }; };
-const _c1 = function (a1) { return ["/eventDetail", a1]; };
+const _c0 = function (a1) { return ["/eventDetail", a1]; };
 function EventComponent_mat_card_0_a_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "h2");
@@ -5211,7 +5211,7 @@ function EventComponent_mat_card_0_a_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c0, ctx_r3.event._id)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c0, ctx_r3.event._id));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r3.event.name);
 } }
@@ -5296,15 +5296,15 @@ function EventComponent_mat_card_0_mat_card_content_11_Template(rf, ctx) { if (r
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r13.event.pricing_info);
 } }
-const _c2 = function (a0) { return { user: a0 }; };
-const _c3 = function (a1) { return ["/otherProfile", a1]; };
+const _c1 = function (a0) { return { user: a0 }; };
+const _c2 = function (a1) { return ["/otherProfile", a1]; };
 function EventComponent_mat_card_0_mat_card_content_12_a_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 9);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c2, ctx_r19.event.createur)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](2, _c1, ctx_r19.event.createur)));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx_r19.event.createur, "");
 } }
@@ -5338,6 +5338,7 @@ function EventComponent_mat_card_0_mat_card_content_15_Template(rf, ctx) { if (r
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"]("Contact : ", ctx_r17.event.emailCreateur, "");
 } }
+const _c3 = function (a0) { return { _id: a0 }; };
 const _c4 = function (a1) { return ["/createEvent", a1]; };
 function EventComponent_mat_card_0_a_16_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "a", 9);
@@ -5347,11 +5348,11 @@ function EventComponent_mat_card_0_a_16_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](3, _c4, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](1, _c0, ctx_r18.event._id)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("routerLink", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](3, _c4, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](1, _c3, ctx_r18.event._id)));
 } }
 function EventComponent_mat_card_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-card", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, EventComponent_mat_card_0_a_1_Template, 3, 6, "a", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, EventComponent_mat_card_0_a_1_Template, 3, 4, "a", 3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, EventComponent_mat_card_0_ng_template_2_Template, 2, 1, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, EventComponent_mat_card_0_mat_card_content_4_Template, 2, 1, "mat-card-content", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, EventComponent_mat_card_0_mat_card_content_5_Template, 2, 1, "mat-card-content", 5);
@@ -5567,7 +5568,7 @@ const routes = [
     { path: 'signup', component: _auth_signup_signup_component__WEBPACK_IMPORTED_MODULE_4__["SignupComponent"] },
     { path: 'profile', canActivate: [_shared_guards_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]], component: _profile_profile_component__WEBPACK_IMPORTED_MODULE_5__["ProfileComponent"] },
     { path: 'otherProfile', component: _other_profile_other_profile_component__WEBPACK_IMPORTED_MODULE_9__["OtherProfileComponent"] },
-    { path: 'eventDetail', component: _event_detail_event_detail_component__WEBPACK_IMPORTED_MODULE_8__["EventDetailComponent"] },
+    { path: 'eventDetail/:id', component: _event_detail_event_detail_component__WEBPACK_IMPORTED_MODULE_8__["EventDetailComponent"] },
     { path: 'editPass', canActivate: [_shared_guards_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]], component: _auth_edit_password_edit_password_component__WEBPACK_IMPORTED_MODULE_10__["EditPasswordComponent"] },
     { path: '**', component: _main_main_component__WEBPACK_IMPORTED_MODULE_7__["MainComponent"] }
 ];
