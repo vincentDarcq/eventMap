@@ -343,6 +343,7 @@ class EventService {
     getEvents(map) {
         let ev = new Array();
         this.http.post('/api/event/get', map).subscribe((events) => {
+            console.log(events);
             for (let event of Object.keys(events)) {
                 const e = events[event];
                 let newEvent = new _models_event__WEBPACK_IMPORTED_MODULE_3__["Event"](e._id, e.name, new Date(e.dateDebut), e.beginTime, new Date(e.dateFin), e.endTime, e.type, e.description, e.lieu, e.latitude, e.longitude, e.createur, e.emailCreateur, this.timeBefore(e.dateDebut), e.createByOwner);
@@ -366,6 +367,7 @@ class EventService {
                 newEvent.image1 = e.image1;
                 newEvent.image2 = e.image2;
                 newEvent.image3 = e.image3;
+                newEvent.setImageUrl(e.imageUrl);
                 if (newEvent.getDateFin()) {
                     const time_before_end = this.timeBefore(newEvent.getDateFin());
                     if (time_before_end.days < 0 || time_before_end.hours < 0 || time_before_end.minutes < 0) {
@@ -1393,8 +1395,7 @@ class EventDetailComponent {
         this.subActivatedRoute = this.activatedRoute.params.subscribe((params) => {
             this.idEvent = params['id'];
             this.subEvents = this.eventService.events.subscribe((events) => {
-                const index = events.findIndex((event) => this.idEvent === event._id);
-                this.event = events[index];
+                this.event = events.find((event) => this.idEvent === event._id);
                 if (typeof this.event === "undefined") {
                     this.subEvent = this.eventService.getEventFromApi(this.idEvent).subscribe((event) => {
                         this.event = event;
