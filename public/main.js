@@ -5439,7 +5439,6 @@ class EventComponent {
             this.event.setSpaceAndTime(e.space_and_time);
             this.event.setPricingInfo(e.pricing_info);
             this.event.setCreateByOwner(true);
-            console.log(this.currentUser);
         }
     }
     ngOnDestroy() {
