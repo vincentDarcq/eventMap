@@ -3673,10 +3673,7 @@ class MapComponent {
     }
     createMarker(e) {
         const point = this.mapService.createPoint(this.mapPoint);
-        let time = null;
-        if (e.timeLeft) {
-            time = e.timeLeft.days + "j " + e.timeLeft.hours + "h " + e.timeLeft.minutes + "min";
-        }
+        let time = e.timeLeft.days + "j " + e.timeLeft.hours + "h " + e.timeLeft.minutes + "min";
         const layer = Object(leaflet__WEBPACK_IMPORTED_MODULE_1__["marker"])(point).setIcon(this.getRedIcon())
             .addTo(this.map)
             .on('click', () => {
@@ -3685,7 +3682,7 @@ class MapComponent {
                 this.getZoomOnEvent(point);
             });
         })
-            .bindTooltip(time ? time : null);
+            .bindTooltip(time);
         this.layers.push(layer);
     }
     getZoomOnEvent(point) {
@@ -5522,7 +5519,6 @@ class MetaAndTitleService {
     updateMeta(url) {
         const oldTagDescription = this.meta.getTag('name="description"');
         const index = "/" + this.urlPaths[1];
-        console.log(index);
         const newTagDescription = {
             name: 'description',
             content: _helpers_meta_data__WEBPACK_IMPORTED_MODULE_3__["default"][index].metas.description
