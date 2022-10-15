@@ -5411,7 +5411,7 @@ function EventComponent_mat_card_0_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.event.emailCreateur);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.currentUser && ctx_r0.event.createByOwner && ctx_r0.event.emailCreateur === ctx_r0.currentUser.email);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx_r0.currentUser.name && ctx_r0.event.createByOwner && ctx_r0.event.emailCreateur === ctx_r0.currentUser.email);
 } }
 function EventComponent_ng_template_1_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p", 12);
@@ -5439,6 +5439,7 @@ class EventComponent {
             this.event.setSpaceAndTime(e.space_and_time);
             this.event.setPricingInfo(e.pricing_info);
             this.event.setCreateByOwner(true);
+            console.log(this.currentUser);
         }
     }
     ngOnDestroy() {
