@@ -567,6 +567,13 @@ class EventService {
     getEvent(id) {
         return this.events.value.find(e => e._id === id);
     }
+    fetchEvent(id) {
+        return this.http.get(`/api/event/getEventsById`, {
+            params: {
+                id: id
+            }
+        });
+    }
     setBounds(bounds) {
         this.zone.run(() => {
             this.bounds.next(bounds);
@@ -1472,6 +1479,12 @@ class EventDetailComponent {
             this.eventService.events.subscribe((events) => {
                 const id = events.findIndex((event) => this.idEvent === event._id);
                 this.event = events[id];
+                console.log(this.event);
+                if (!this.event) {
+                    this.eventService.fetchEvent(this.idEvent).subscribe((event) => {
+                        this.event = event;
+                    });
+                }
             });
         });
     }
